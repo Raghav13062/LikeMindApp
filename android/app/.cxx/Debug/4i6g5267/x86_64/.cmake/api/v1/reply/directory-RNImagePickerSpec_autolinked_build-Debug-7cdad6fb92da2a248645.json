@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "RNImagePickerSpec_autolinked_build",
+		"source" : "/Users/raghav/Documents/raghav_Project/LikeMind/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni"
+	}
+}
