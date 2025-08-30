@@ -1,50 +1,64 @@
-import { useEffect, useState,   } from 'react';
-import { useNavigation } from '@react-navigation/native';
- import {     DeleteEvent, GetEventPaid } from '../../../Api/apiPaidExperti';
-  const useHomePaid = () => {
-  const navigation:any = useNavigation();
-   const [getEvent, setgetEvent] = useState(null);
-    const [loading, setLoading] = useState(false);
- useEffect(()=>{
-  fetchEventS()
- },[])
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { DeleteEvent, GetEventPaid } from "../../../Api/apiPaidExperti";
 
-  
-  const fetchEventS = async () => {
+const useHomePaid = () => {
+  const navigation: any = useNavigation();
+  const [getEvent, setGetEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ useEffect runs on mount
+  useEffect(() => {
+    fetchAllApis();
+  }, []);
+
+  // ✅ Wrapper function to call all APIs
+  const fetchAllApis = async () => {
+    setLoading(true);
     try {
-       const response = await GetEventPaid(setLoading);
-      if (response?.data) {
-        setgetEvent(response.data)
+      // Example: calling multiple APIs in parallel
+      const [eventResponse] = await Promise.all([
+        GetEventPaid(setLoading),
+        // You can add more API calls here like:
+        // AnotherApiCall(),
+        // YetAnotherApiCall(),
+      ]);
+
+      if (eventResponse?.data) {
+        setGetEvent(eventResponse.data);
       } else {
-        console.warn("No response or invalid community data.");
+        console.warn("No response or invalid event data.");
       }
     } catch (error) {
-      console.error("Community fetch error:", error);
+      console.error("API fetch error:", error);
     } finally {
       setLoading(false);
     }
   };
-   
- 
 
-const handleDelete = async(item:any)=>{
-  try {
-    const response = await DeleteEvent(setLoading,item);
-   if (response) {
-    fetchEventS()
-    } 
- } catch (error) {
-   console.error("Community fetch error:", error);
- } finally {
-   setLoading(false);
- }
-}
+  // ✅ Delete handler
+  const handleDelete = async (item: any) => {
+    setLoading(true);
+    try {
+      const response = await DeleteEvent(setLoading, item);
+      if (response) {
+        // Refresh after deletion
+        fetchAllApis();
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     navigation,
     handleDelete,
-    loading ,
-    getEvent
-   };
+    loading,
+    getEvent,
+    fetchAllApis, // Expose for manual refresh if needed
+  };
 };
 
 export default useHomePaid;

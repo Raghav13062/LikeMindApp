@@ -6,8 +6,7 @@ import {
   Image,
    ScrollView,
    TouchableOpacity,
-  SafeAreaView,
-  FlatList
+   FlatList
  } from 'react-native';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent';
 import DashBoardHeader from '../../../compoent/DashBoardHeader';
@@ -18,6 +17,7 @@ import styles from './style';
 import useHomePaid from './useHomePaid';
 import LoadingModal from '../../../utils/Loader';
 import EmptyListComponent from '../../../compoent/EmptyListComponent';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const clients = [
   {

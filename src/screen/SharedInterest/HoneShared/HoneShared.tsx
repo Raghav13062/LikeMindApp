@@ -6,8 +6,7 @@ import {
   ScrollView,
    TouchableOpacity,
   Image,
-  SafeAreaView,
-} from 'react-native';
+ } from 'react-native';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent';
 import DashBoardHeader from '../../../compoent/DashBoardHeader';
 import SearchBar from '../../../compoent/SearchBar';
@@ -17,6 +16,7 @@ import ScreenNameEnum from '../../../routes/screenName.enum';
 import styles from './style';
 import useHoneShared from './useHoneShared';
 import LoadingModal from '../../../utils/Loader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HoneShared = () => {  
   const { navigation,

@@ -30,11 +30,11 @@ export default function Login() {
   //  const [password, setPassword] = useState('123456');
   // const [email, setEmail] = useState('paid@gmail.com');
   // const [password, setPassword] = useState('Aman@1234567');
-  // const [email, setEmail] = useState('shard112@gmail.com');
-  // const [password, setPassword] = useState('1234567');
+  const [email, setEmail] = useState('shard112@gmail.com');
+  const [password, setPassword] = useState('1234567');
 
-  const [email, setEmail] = useState('user@gmail.com');
-  const [password, setPassword] = useState('12345678');
+  // const [email, setEmail] = useState('user@gmail.com');
+  // const [password, setPassword] = useState('12345678');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const navigation:any = useNavigation();
