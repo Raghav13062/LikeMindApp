@@ -36,7 +36,7 @@ const HoneShared = () => {
       {/* Groups Horizontal Scroll */}
       <Text style={styles.sectionTitle}>Groups</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-    {[].map(()=>{
+    {/* {[].map(()=>{
       return(
         <View style={styles.groupCard}>
         <Image
@@ -52,7 +52,7 @@ const HoneShared = () => {
         </View>
       </View>
       )
-    })}
+    })} */}
         {/* Repeat more cards if needed */}
       </ScrollView>
 
