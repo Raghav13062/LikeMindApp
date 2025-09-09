@@ -166,10 +166,9 @@ import ErrorText from '../../compoent/ErrorText';
                             }}>
                             <Image
                                 source={imageIndex.appLogo}
-                                style={{ height: hp(7), width: '100%', marginVertical: 20 }} resizeMode='contain'
-                            />
+ style={{ height: 180, width:200,  }}             resizeMode='contain'               />
 
-                            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: ResponsiveSize.marginTop(25) }}>
+                            <View style={{ alignItems: 'center', justifyContent: 'center',   }}>
                                 <Text style={styles.txtHeading}>Sign Up</Text>
                                 <Text style={styles.txtsubHeading}>
                                     Please fill up this form to create an account

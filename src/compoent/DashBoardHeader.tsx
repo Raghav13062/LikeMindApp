@@ -9,6 +9,7 @@ const DashBoardHeader = ({ setting = true }: { setting?: boolean }) => {
 
   return (
     <View style={styles.header}>
+      {/* Logo */}
       <View style={styles.logoContainer}>
         <Image
           source={imageIndex.appLogo}
@@ -17,6 +18,7 @@ const DashBoardHeader = ({ setting = true }: { setting?: boolean }) => {
         />
       </View>
 
+      {/* Right side icons */}
       <View style={styles.iconRow}>
         {setting && (
           <TouchableOpacity style={styles.iconWrapper}>
@@ -53,33 +55,35 @@ const DashBoardHeader = ({ setting = true }: { setting?: boolean }) => {
 
 export default DashBoardHeader;
 
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-     paddingVertical: 12,
-     marginHorizontal:12
-     
+    paddingVertical: 10,
+     backgroundColor: '#FFFFFF', // clean white background
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5', // subtle separator line
   },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   logo: {
-    width: 128,
-    height: 35,
+    width: 120,
+    height: 70,
   },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconWrapper: {
-    marginLeft: 16,
+    marginLeft: 20,
+    padding: 8, // better touchable area
+    borderRadius: 30,
   },
   icon: {
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
   },
 });

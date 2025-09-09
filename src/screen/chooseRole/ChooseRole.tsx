@@ -82,10 +82,9 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: 200,
-        height: 60,
+        height: 200,
         resizeMode: 'contain',
-        marginBottom: 40,
-    },
+     },
     title: {
         fontSize: 26,
         fontWeight: 'bold',

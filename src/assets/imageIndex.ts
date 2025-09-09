@@ -1,5 +1,7 @@
 export default {
-    appLogo: require('./images/appLogo.png'),
+    // appLogo: require('./images/appLogo.png'),
+        appLogo: require('./images/appLogo1.jpeg'),
+
     onBag: require('./images/onBag.png'),
     welcomeLike: require('./images/welcomeLike.png'),
     fb: require('./images/fb.png'),

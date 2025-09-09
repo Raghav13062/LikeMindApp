@@ -130,9 +130,9 @@ export default function Login() {
           }}>
           <Image
             source={imageIndex.appLogo}
-            style={{ height: hp(7), width: '100%', marginVertical: 20 }} resizeMode='contain'
+            style={{ height: 180, width:200,  }} resizeMode='contain'
           />
-          <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 7 }}>
+          <View style={{ alignItems: 'center', justifyContent: 'center',  }}>
           <Text style={[styles.txtsubHeading, {
   color: "black",
   fontWeight: "bold",

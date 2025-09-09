@@ -248,7 +248,9 @@ const Standout = () => {
      <SearchBar/>
 
       <FlatList
-        data={standoutList}
+        // data={standoutList}
+          data={standoutList?.slice(0, 1)} // sirf pehla item
+
         keyExtractor={(item:any) => item.id}
         renderItem={({ item }) => <PartnerCard item={item} />}
         contentContainerStyle={{ paddingBottom: 20 ,marginTop:11,}}
