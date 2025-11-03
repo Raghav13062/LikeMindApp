@@ -13,6 +13,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 10,
+     marginBottom:12
+  },
   headerTitle: {
     fontWeight: 'bold',
     fontSize: 18,
@@ -54,8 +63,7 @@ const styles = StyleSheet.create({
     marginTop:12
   },
   categoryIcon: {
-    backgroundColor: '#7D8A95',
-     borderRadius: 11,
+      borderRadius: 11,
     justifyContent:"center",
     alignItems:"center" ,
     height:60,

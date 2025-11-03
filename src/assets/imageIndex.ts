@@ -107,5 +107,10 @@ export default {
     Sessions: require('./images/Sessions.png'),
     Clientsgray: require('./images/Clientsgray.png'),
     EarningsAtive: require('./images/EarningsAtive.png'),
+        community: require('./images/community.png'),
+                conference: require('./images/conference.png'),
+
+                leader: require('./images/leader.png'),
+
      // 
   }; 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import imageIndex from '../assets/imageIndex';
 
 interface BackButtonWithLabelProps {
     label?: string;
@@ -31,7 +32,7 @@ const CustomHeader: React.FC<BackButtonWithLabelProps> = ({
         <View style={[styles.container,mainView]}>
             {/* Back Button - Aligned to Left */}
             <TouchableOpacity style={styles.button} onPress={handlePress}>
-                <Image source={imageSource} style={[styles.image,imageProps]}
+                <Image source={imageIndex.back} style={[styles.image,imageProps]}
                 resizeMode='cover'
                 />
             </TouchableOpacity>

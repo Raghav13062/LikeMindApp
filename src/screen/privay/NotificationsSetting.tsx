@@ -1,113 +1,152 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, TouchableOpacity, StyleSheet } from 'react-native';
-import CustomHeader from '../../compoent/CustomHeader';
+import React from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import imageIndex from '../../assets/imageIndex';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import StatusBarComponent from '../../compoent/StatusBarCompoent';
-// If you want icons, install react-native-vector-icons, or use any icon library you prefer
-// import Icon from 'react-native-vector-icons/Ionicons';
 
-const NotificationsSetting = () => {
-  // State for toggles
-  const [generalNotification, setGeneralNotification] = useState(true);
-  const [sound, setSound] = useState(false);
-  const [vibrate, setVibrate] = useState(false);
-  const [appUpdates, setAppUpdates] = useState(true);
+const dummyNotifications = [
+   
+];
+
+const NotificationScreen = () => {
+  const navigation = useNavigation();
+
+  const renderItem = ({ item }: { item: any }) => (
+    <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+      <Image
+        source={imageIndex.notification}
+        style={styles.icon}
+        resizeMode="contain"
+      />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.message} numberOfLines={2}>
+          {item.message}
+        </Text>
+        <Text style={styles.time}>{item.time}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBarComponent />
-      <View   >
-        <CustomHeader
-          imageProps={{
-            height: 22,
-            width: 22
-          }}
-          mainView={{
-            marginTop: 20
-          }}
-          imageSource={imageIndex.menu} label="Notifications" />
-
-        {/* Body */}
-        <View style={{ marginTop: 40,marginHorizontal:15 }}>
-
-          <View style={styles.notificationOption}>
-            <Text style={styles.optionText}>General Notification</Text>
-            <Switch
-              value={generalNotification}
-              onValueChange={val => setGeneralNotification(val)}
-              trackColor={{ false: '#767577', true: '#f4511e' }}
-              thumbColor={generalNotification ? '#fff' : '#fff'}
-            />
-          </View>
-          <View style={styles.notificationOption}>
-            <Text style={styles.optionText}>Sound</Text>
-            <Switch
-              value={sound}
-              onValueChange={val => setSound(val)}
-              trackColor={{ false: '#767577', true: '#f4511e' }}
-              thumbColor={sound ? '#fff' : '#fff'}
-            />
-          </View>
-
-          <View style={styles.notificationOption}>
-            <Text style={styles.optionText}>Vibrate</Text>
-            <Switch
-              value={vibrate}
-              onValueChange={val => setVibrate(val)}
-              trackColor={{ false: '#767577', true: '#f4511e' }}
-              thumbColor={vibrate ? '#fff' : '#fff'}
-            />
-          </View>
-
-          <View style={styles.notificationOption}>
-            <Text style={styles.optionText}>App Updates</Text>
-            <Switch
-              value={appUpdates}
-              onValueChange={val => setAppUpdates(val)}
-              trackColor={{ false: '#767577', true: '#f4511e' }}
-              thumbColor={appUpdates ? '#fff' : '#fff'}
-            />
-          </View>
-        </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButtonContainer}>
+          <Text style={styles.backArrow}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Notifications</Text>
+        <View style={{ width: 32 }} /> 
       </View>
+
+      {/* Notification List */}
+      {dummyNotifications.length > 0 ? (
+        <FlatList
+          data={dummyNotifications}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingVertical: 10 }}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No notifications yet 🎉</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
-export default NotificationsSetting;
+export default NotificationScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FAFAFA',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 30,
-    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  hamburger: {
-    width: 24,
-    height: 24,
+  backButtonContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F2F2F2',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backArrow: {
+    fontSize: 18,
+    color: '#333',
+  },
   headerTitle: {
+    flex: 1,
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',
+    color: '#222',
+    marginRight: 32, // balance back button space
   },
-  notificationOption: {
+  card: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
+    padding: 14,
+    marginHorizontal: 12,
+    marginVertical: 6,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  optionText: {
+  icon: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
+    tintColor: '#4F8EF7',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#222',
+  },
+  message: {
+    fontSize: 13,
+    color: '#555',
+    marginTop: 2,
+  },
+  time: {
+    fontSize: 11,
+    color: '#999',
+    marginTop: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
     fontSize: 16,
-    color: "rgba(251, 91, 43, 1)",
-    fontWeight: "700",
-    lineHeight:15
+    color: '#666',
   },
 });

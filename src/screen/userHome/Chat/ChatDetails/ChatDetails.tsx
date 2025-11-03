@@ -1,5 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,149 +6,208 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
-  Image, ImageBackground,
- } from 'react-native';
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import StatusBarComponent from '../../../../compoent/StatusBarCompoent';
 import imageIndex from '../../../../assets/imageIndex';
-import { SafeAreaView } from 'react-native-safe-area-context';
-  
+
 const ChatDetails = () => {
-  const messages = [
-    { id: '1', text: 'Hello ChatGPT, how are you today?', isSender: true },
-    { id: '2', text: "Hello,i’m fine,how can i help you?", isSender: false },
-     
-  ];
- 
+  const route: any = useRoute();
+  const { item } = route.params || {};
   const navigation = useNavigation();
+
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const flatListRef = useRef<FlatList>(null);
+
+  // ✅ Fetch Chat Messages
+  const fetchChats = async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.warn('No token found');
+        return;
+      }
+
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${token}`);
+
+      const formdata = new FormData();
+      formdata.append('receiver_id', item?.id);
+
+      const response = await fetch(
+        'https://onetenbd.com/likemind/api/chats/get_chat',
+        {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+        }
+      );
+
+      const result = await response.json();
+      if (result.success && Array.isArray(result.data)) {
+        setMessages(result.data.reverse()); // reverse to show latest at bottom
+      }
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Send Message
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.warn('No token found');
+        return;
+      }
+
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${token}`);
+
+      const formdata = new FormData();
+      formdata.append('chat_receiver_id', item?.id);
+      formdata.append('chat_message', message.trim());
+      formdata.append('chat_type', 'TEXT');
+
+      const response = await fetch(
+        'https://onetenbd.com/likemind/api/chats/post_chat',
+        {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            chat_message: message,
+            chat_sender_id: 'me', // temporary local sender
+            chat_receiver_id: item.id,
+            isSender: true,
+          },
+        ]);
+        setMessage('');
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 200);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchChats();
+  }, []);
+
+  const renderMessage = ({ item }: any) => {
+    const isSender = item.chat_sender_id || item.isSender;
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: isSender ? 'flex-end' : 'flex-start',
+          marginVertical: 5,
+        }}>
+        <View
+          style={[
+            styles.chatBubble,
+            isSender ? styles.senderBubble : styles.receiverBubble,
+          ]}>
+          <Text
+            style={[
+              styles.chatText,
+              isSender ? { color: '#fff' } : { color: '#000' },
+            ]}>
+            {item.chat_message}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
-    <SafeAreaView 
-      style={{ flex: 1 }}
-    >
-      <StatusBarComponent  backgroundColor="#8E44AD" barStyle='default'/>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <StatusBarComponent backgroundColor="#8E44AD" barStyle="light-content" />
+
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => {
-            navigation.goBack()
-          }}
+          onPress={() => navigation.goBack()}
           style={{ marginRight: 15 }}>
-         <Image source={imageIndex.backNavsPuple} style={{ height: 28, width: 28 }} />  
+          <Image
+            source={imageIndex.backNavsPuple}
+            style={{ height: 28, width: 28 }}
+          />
         </TouchableOpacity>
         <Image
-         source={{ uri:   'https://randomuser.me/api/portraits/men/1.jpg' }}
+          source={{
+            uri:item?.image,
+          }}
           style={styles.profileImage}
         />
         <View style={styles.headerInfo}>
-          <Text style={styles.userName}>Jenny Wilson</Text>
-          <Text style={styles.onlineStatus}>• Online</Text>
+          <Text style={styles.userName}>{item?.first_name}</Text>
+         </View>
+      </View>
+
+      {/* Chat List */}
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderMessage}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10 }}
+        onContentSizeChange={() =>
+          flatListRef.current?.scrollToEnd({ animated: true })
+        }
+      />
+
+      {/* Input Bar */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Write your message..."
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={message}
+            onChangeText={setMessage}
+          />
+          <TouchableOpacity onPress={sendMessage}>
+            <Image source={imageIndex.send} style={{ height: 24, width: 24 }} />
+          </TouchableOpacity>
         </View>
-      </View>
- 
-      <View style={{ marginTop: 32 }} />
-       <FlatList
-            data={messages}
-            renderItem={({ item }) => (
-              <View>
-   
-   
-                <View  style={{
-                  flexDirection:"row",
-                  alignSelf:item.isSender  ?  'flex-end':"flex-start",
-                 }}>
-                  {/* {!item.isSender && (<Image
-                    source={require('../../../assets/Cropping/userChatai.png')}
-                    style={{
-                      width: 27,
-                      height: 27,
-                      borderRadius: 20,
-                      marginTop:60
-                       
-                    }}
-                  />)} */}
-   
-                  <View
-                    style={[
-                      styles.chatBubble,
-                      item.isSender ? styles.senderBubble : styles.receiverBubble,
-                    ]}
-                  >
-   
-                    <Text style={[styles.chatText, item.isSender && { color: '#fff' }]}>{item.text}</Text>
-   
-                  </View>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item) => item.id}
-            style={styles.chatList}
-          />
- 
-   
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 8,
-        borderTopWidth: 1,
-        borderTopColor: '#F0F0F0',
-        backgroundColor: "white",
-        marginHorizontal: 20,
-        marginBottom: 20,
-        borderRadius: 30
-      }}>
-        <TextInput
-          placeholder="Write your message"
-          style={{
-            borderRadius: 20,
-            paddingHorizontal: 15,
-            height: 40,
-             marginHorizontal: 5,
-            fontSize: 13,
-            flex:1,
-            color:"black"
-          }}
-          placeholderTextColor="rgba(161, 161, 161, 1)"
-        />
-        <TouchableOpacity style={{ backgroundColor: 'white', padding: 5, borderRadius: 5 }}>
-          {/* <Image
-            source={require('../../../assets/Cropping/documentCopy.png')}
-            style={{ height: 24, width: 24 }}
-          /> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={{ backgroundColor: 'white', padding: 5, borderRadius: 5 }}>
-          {/* <Image
-            source={require('../../../assets/Cropping/microphone.png')}
-            style={{ height: 24, width: 24 }}
-          /> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={{ backgroundColor: 'white', padding: 5, borderRadius: 5 }}>
-          <Image
-            source={imageIndex.send}
-            style={{ height: 24, width: 24 }}
-          />
-        </TouchableOpacity>
-      </View>
- 
-      
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
- 
+
+export default ChatDetails;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 22,
-    borderBottomWidth: 0.9,
-    borderColor: "rgba(236, 236, 236, 1)",
-    backgroundColor:"#8E44AD"
-  },
-  backButton: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    marginRight: 10,
+    backgroundColor: '#8E44AD',
   },
   profileImage: {
     width: 45,
@@ -163,61 +221,43 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '700',
-    lineHeight: 27
   },
   onlineStatus: {
     color: 'rgba(58, 191, 56, 1)',
     fontSize: 15,
-    marginTop: 1,
-    fontWeight: "500"
- 
-  },
-  chatList: {
-    flex: 1,
-     marginHorizontal:20
+    fontWeight: '500',
   },
   chatBubble: {
-    marginVertical: 5,
     padding: 10,
     borderRadius: 15,
     maxWidth: '75%',
   },
   senderBubble: {
- 
     backgroundColor: '#8E44AD',
-    alignSelf: 'flex-end',
-    borderTopRightRadius: 1, // Adjust this value as needed
-    marginTop: 20
- 
+    borderTopRightRadius: 1,
   },
   receiverBubble: {
-   
     backgroundColor: '#F0F0F0',
-    alignSelf: 'flex-start',
-    borderBottomLeftRadius: 1,  // Adjust this value as needed
-    borderTopRightRadius: 10, // Adjust this value as needed
-    marginTop: 20
- 
+    borderBottomLeftRadius: 1,
   },
   chatText: {
-    color: '#333333',
     fontSize: 14,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    margin: 10,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
   },
-  textInput: {
- 
-  },
-  icon: {
-    fontSize: 18,
-    marginHorizontal: 10,
+  input: {
+    flex: 1,
+    height: 40,
+    fontSize: 14,
+    color: '#000',
+    paddingHorizontal: 10,
   },
 });
- 
-export default ChatDetails;
- 

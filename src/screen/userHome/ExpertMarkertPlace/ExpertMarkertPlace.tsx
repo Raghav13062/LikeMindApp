@@ -7,36 +7,51 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import moment from 'moment';
+
 import SearchBar from '../../../compoent/SearchBar';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent';
 import CustomHeader from '../../../compoent/CustomHeader';
+import EmptyListComponent from '../../../compoent/EmptyListComponent';
+import LoadingModal from '../../../utils/Loader';
 import imageIndex from '../../../assets/imageIndex';
 import ScreenNameEnum from '../../../routes/screenName.enum';
 import useExpertMarkert from './useExpertMarkertP';
-import EmptyListComponent from '../../../compoent/EmptyListComponent';
-import moment from 'moment';
-import LoadingModal from '../../../utils/Loader';
 import styles from './style';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ExpertMarkertPlace() {
   const { navigation, isLoading, eventCategories, event } = useExpertMarkert();
 
   const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // ✅ Filtered data using search
-  const filteredEvents = useMemo(() => {
-    if (!searchText) return event;
-    return event.filter((item: any) =>
-      `${item?.name} ${item?.title} ${item?.about}`
-        .toLowerCase()
-        .includes(searchText.toLowerCase())
-    );
-  }, [searchText, event]);
+ 
+const filteredEvents = useMemo(() => {
+  return event.filter((item: any) => {
+    console.log('Filtering item:', item);
+
+    // Combine all searchable fields
+    const searchableText = `
+      ${item?.name || ''}
+      ${item?.title || ''}
+      ${item?.about || ''}
+      ${item?.price !== null && item?.price !== undefined ? item?.price : ''}
+    `.toLowerCase();
+
+    const matchesSearch = searchableText.includes(searchText.toLowerCase());
+
+    const matchesCategory =
+      !selectedCategory || item.category_id === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+}, [searchText, event, selectedCategory]);
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      {isLoading ? <LoadingModal /> : null}
+      {isLoading && <LoadingModal />}
 
       <StatusBarComponent />
       <CustomHeader
@@ -44,7 +59,7 @@ export default function ExpertMarkertPlace() {
         label="Expert Marketplace"
       />
 
-      {/* ✅ Search bar connected */}
+      {/* ✅ Search bar */}
       <View style={{ marginTop: 15, marginHorizontal: 10, marginBottom: 12 }}>
         <SearchBar value={searchText} onSearchChange={setSearchText} />
       </View>
@@ -57,19 +72,45 @@ export default function ExpertMarkertPlace() {
           style={styles.categoryList}
         >
           {eventCategories.map((cat: any, index) => (
-            <View style={styles.categoryItem} key={index}>
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                setSelectedCategory(
+                  selectedCategory === cat.id ? null : cat.id
+                )
+              }
+              style={[
+                styles.chip,
+                {
+                  backgroundColor:
+                    selectedCategory === cat.id
+                      ? "#f9f9f9"
+                      : "#f9f9f9",
+                },
+              ]}
+            >
+
               <View style={styles.categoryIcon}>
                 <Image
                   source={{ uri: cat.image }}
-                  style={{ height: 25, width: 25 }}
+                  style={{ height: 20, width: 20, marginRight: 8 }}
                 />
-                <Text style={styles.categoryLabel}>{cat.name}</Text>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    marginTop: 5,
+                    fontWeight: '600',
+                    color: 'black',
+                  }}
+                >
+                  {cat.name}
+                </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* ✅ Event List with Search */}
+        {/* ✅ Event List */}
         <FlatList
           data={filteredEvents}
           ListEmptyComponent={

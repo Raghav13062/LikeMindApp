@@ -1,5 +1,5 @@
 // ClientsScreen.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,87 +9,95 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent';
+import { getgroups } from '../../../Api/apiPaidExperti';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const tabs = ['Active', 'Past', 'Pending'];
-const clients = [
-  {
-    id: 1,
-    name: 'Roger Ekstrom',
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
-    status: 'Active',
-    lastInteraction: 'Oct 5, 2023',
-  },
-  {
-    id: 2,
-    name: 'Gretchen Curtis',
-    image: "https://randomuser.me/api/portraits/women/2.jpg",
-    status: 'Active',
-    lastInteraction: 'Oct 5, 2023',
-  },
-  {
-    id: 3,
-    name: 'Craig Torff',
-    image:"https://randomuser.me/api/portraits/women/2.jpg",
-    status: 'Active',
-    lastInteraction: 'Oct 5, 2023',
-  },
-  {
-    id: 4,
-    name: 'Zaire Vaccaro',
-     status: 'Active',
-    lastInteraction: 'Oct 5, 2023',
-        image:"https://randomuser.me/api/portraits/women/2.jpg",
-
-  },
-];
 
 const Clients = () => {
+  const [getGroup, setgetGroup] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState('Active');
 
+  useEffect(() => {
+    fetchEventS();
+  }, []);
+
+  const fetchEventS = async () => {
+    const token = await AsyncStorage.getItem('token');
+    console.log('token', token);
+
+    try {
+      setLoading(true);
+      const response = await getgroups(setLoading);
+      if (response?.data) {
+        console.log('response', response);
+        setgetGroup(response.data);
+      } else {
+        console.warn('No response or invalid community data.');
+      }
+    } catch (error) {
+      console.error('Community fetch error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={{
-      flex:1,
-      backgroundColor:"white"
-    }}>
-                <StatusBarComponent />
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <StatusBarComponent />
 
-    <View style={styles.container}>
-      <Text style={styles.heading}>Clients</Text>
+      <View style={styles.container}>
+        <Text style={styles.heading}>Clients</Text>
 
-      <View style={styles.tabs}>
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => setSelectedTab(tab)}
-            style={[
-              styles.tabButton,
-              selectedTab === tab && styles.activeTab,
-            ]}
-          >
-            <Text style={selectedTab === tab ? styles.activeText : styles.tabText}>
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <ScrollView style={styles.list}>
-        {clients.map(client => (
-          <View key={client.id} style={styles.card}>
-            <Image source={{uri:client.image}} style={styles.image} />
-            <View>
-              <Text style={styles.name}>{client.name}</Text>
-              <Text style={styles.status}>Active</Text>
-              <Text style={styles.lastInteraction}>
-                Last interaction: {client.lastInteraction}
+        {/* Tabs */}
+        {/* <View style={styles.tabs}>
+          {tabs.map(tab => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setSelectedTab(tab)}
+              style={[
+                styles.tabButton,
+                selectedTab === tab && styles.activeTab,
+              ]}
+            >
+              <Text
+                style={selectedTab === tab ? styles.activeText : styles.tabText}
+              >
+                {tab}
               </Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+            </TouchableOpacity>
+          ))}
+        </View> */}
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#F39C12" />
+        ) : (
+          <ScrollView style={styles.list}>
+            {getGroup.length > 0 ? (
+              getGroup.map(item => (
+                <View key={item.id} style={styles.card}>
+                  <Image source={{ uri: item.image }} style={styles.image} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.name}>{item.title}</Text>
+                    <Text style={styles.status}>{item.location}</Text>
+                    <Text style={styles.lastInteraction}>
+                      Created at: {item.created_at}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <Text style={{ color: 'gray', textAlign: 'center', marginTop: 20 }}>
+                No clients found
+              </Text>
+            )}
+          </ScrollView>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -107,8 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
-    color:"black",
-  
+    color: 'black',
   },
   tabs: {
     flexDirection: 'row',
@@ -117,7 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f3f3',
     borderRadius: 30,
     padding: 5,
-    marginTop:10
+    marginTop: 10,
   },
   tabButton: {
     flex: 1,
@@ -140,30 +147,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-  flexDirection: 'row',
-  backgroundColor: 'white',
-  padding: 15,
-  borderRadius: 16,
-  marginBottom: 15,
-  alignItems: 'center',
-  marginHorizontal: 2,
-  ...Platform.select({
-    ios: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.12,   // a bit softer
-      shadowRadius: 8,       // slightly wider blur
-    },
-    android: {
-      elevation: 5,          // bumps the depth
-      shadowColor: '#000',   // helps on Android 12+
-    },
-  }),
-
-  // Optional: spacing between items (gap for older React Native versions)
-  // Use this only if you're on RN 0.71+ which supports 'gap'
-  gap: 12,
-
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 16,
+    marginBottom: 15,
+    alignItems: 'center',
+    borderWidth:0.8,
+     marginHorizontal: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+      },
+      android: {
+         shadowColor: '#000',
+         
+      },
+    }),
+    gap: 12,
   },
   image: {
     width: 60,
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: '700',
     fontSize: 15,
-    color:"black"
+    color: 'black',
   },
   status: {
     color: 'green',

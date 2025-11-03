@@ -11,7 +11,7 @@ export interface ApiRequest {
   redirect?:any
 }
 
-export const base_url = 'https://dreamscaping.app/likemind/api';
+export const base_url = 'https://onetenbd.com/likemind/api';
 export const image_url = 'https://server-php-8-3.technorizen.com/ScrapApp/api/';
 
  

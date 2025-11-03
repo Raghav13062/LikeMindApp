@@ -19,6 +19,7 @@ import LoadingModal from '../../../utils/Loader';
 import EmptyListComponent from '../../../compoent/EmptyListComponent';
 import CustomHeader from '../../../compoent/CustomHeader';
 import imageIndex from '../../../assets/imageIndex';
+import ScreenNameEnum from '../../../routes/screenName.enum';
 
  
  
@@ -44,7 +45,7 @@ const {   navigation,
           
           onPress={() => setShowCreateModal(true)}
           >
-            <Text style={styles.joinBtnText}>Create Community</Text>
+            <Text style={styles.joinBtnText}>join</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -60,34 +61,54 @@ const {   navigation,
       marginTop:15
 
 }}>
-      <Text style={styles.title}>Find or Join Communities</Text>
-       
+         <View style={styles.container1}>
+      {/* <TouchableOpacity style={styles.button}
+      onPress={() => navigation.navigate('EventListScreen')}
+      >
+        <Text style={styles.icon}>➕</Text>
+        <Text style={styles.text}>Host Event</Text>
+      </TouchableOpacity> */}
+
+      {/* <TouchableOpacity style={styles.button}
+            onPress={() => navigation.navigate('OfferExperties')}
+
+      
+      >
+        <Text style={styles.icon}>➕</Text>
+        <Text style={styles.text}>Offer Expertise</Text>
+      </TouchableOpacity> */}
+    </View>
       {isLoading ? <LoadingModal /> : null}
       <SearchBar value={search} onSearchChange={setSearch} />
 
  
 
 <ScrollView showsVerticalScrollIndicator={false}> 
-    <FlatList 
-    
-   data={categoryList}
-  keyExtractor={(item:any) => item.id}
-  horizontal 
-  style={{
-    marginTop:20
-  }}
+   <FlatList
+  data={categoryList}
+  keyExtractor={(item: any) => item.id.toString()}
+  horizontal
+  style={{ marginTop: 20 }}
   showsHorizontalScrollIndicator={false}
   ListEmptyComponent={<EmptyListComponent message="No communities found." />}
-  renderItem={({ item }) =>  {
-     return(
-      <TouchableOpacity style={styles.tagChip}>
-      <Image source={{uri:"https://cdn-icons-png.flaticon.com/256/6724/6724239.png"}} style={styles.tagIcon} />
-      <Text style={styles.tagText}>{item?.name}</Text>
-    </TouchableOpacity>
-    )
+  renderItem={({ item, index }) => {
+    // Assign a color from a palette dynamically
+ 
+    return (
+      <TouchableOpacity
+        style={[styles.colorfulChip,]}
+        activeOpacity={0.85}
+      >
+        <Image
+          source={{ uri: "https://cdn-icons-png.flaticon.com/256/6724/6724239.png" }}
+          style={styles.tagIcon}
+        />
+        <Text style={styles.colorfulChipText}>{item?.name}</Text>
+      </TouchableOpacity>
+    );
   }}
+/>
 
-  />
       <FlatList
         data={filteredList}
         keyExtractor={(item, index) => index.toString()}
@@ -107,7 +128,17 @@ const {   navigation,
         onPress={() => setShowCreateModal(true)}
         activeOpacity={0.85}
       >
-        <Text style={styles.fabText}>+ Create Community</Text>
+        <Text style={styles.fabText}> 👥 Add Community</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.fab1}
+      // onPress={() => navigation.navigate('EventListScreen')}
+            onPress={() => navigation.navigate(ScreenNameEnum.Creategroup)}
+
+        activeOpacity={0.85}
+      >
+        <Text style={styles.fabText}>🗣️ Host Event</Text>
       </TouchableOpacity>
       {/* Create Modal */}
       <CreateCommunityModal

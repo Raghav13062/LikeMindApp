@@ -1,54 +1,34 @@
 import React from 'react';
-import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import imageIndex from '../assets/imageIndex'; // adjust path as needed
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import imageIndex from '../assets/imageIndex';
 import ScreenNameEnum from '../routes/screenName.enum';
 
-const DashBoardHeader = ({ setting = true }: { setting?: boolean }) => {
+const DashBoardHeader = () => {
   const nav = useNavigation();
+  const isLogin: any = useSelector<any>((state) => state?.auth?.userData);
+  const userName = isLogin?.user_data?.full_name || 'Aman';
 
   return (
-    <View style={styles.header}>
-      {/* Logo */}
-      <View style={styles.logoContainer}>
+    <View style={styles.headerContainer}>
+      {/* Left side: Greeting */}
+      <View>
+        <Text style={styles.greetingText}>Hi, {userName}!</Text>
+        <Text style={styles.subText}>Simple greeting and profile access.</Text>
+      </View>
+
+      {/* Right side: Profile Icon */}
+      <TouchableOpacity
+        style={styles.profileWrapper}
+        onPress={() => nav.navigate(ScreenNameEnum.InformationStep)}
+      >
         <Image
-          source={imageIndex.appLogo}
-          style={styles.logo}
+          source={imageIndex.profile}
+          style={styles.profileIcon}
           resizeMode="contain"
         />
-      </View>
-
-      {/* Right side icons */}
-      <View style={styles.iconRow}>
-        {setting && (
-          <TouchableOpacity style={styles.iconWrapper}>
-            <Image
-              source={imageIndex.setting}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          onPress={() => nav.navigate(ScreenNameEnum.InformationStep)}
-          style={styles.iconWrapper}
-        >
-          <Image
-            source={imageIndex.profile}
-            style={styles.icon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.iconWrapper}>
-          <Image
-            source={imageIndex.notification}
-            style={styles.icon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -56,34 +36,33 @@ const DashBoardHeader = ({ setting = true }: { setting?: boolean }) => {
 export default DashBoardHeader;
 
 const styles = StyleSheet.create({
-  header: {
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
-     backgroundColor: '#FFFFFF', // clean white background
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5', // subtle separator line
+    borderBottomColor: '#EAEAEA',
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  greetingText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111111',
   },
-  logo: {
-    width: 120,
-    height: 70,
+  subText: {
+    fontSize: 14,
+    color: '#666666',
+    marginTop: 2,
   },
-  iconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  profileWrapper: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 40,
+    padding: 6,
   },
-  iconWrapper: {
-    marginLeft: 20,
-    padding: 8, // better touchable area
-    borderRadius: 30,
-  },
-  icon: {
-    width: 28,
-    height: 28,
+  profileIcon: {
+    width: 34,
+    height: 34,
   },
 });

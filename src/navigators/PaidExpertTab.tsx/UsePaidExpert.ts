@@ -28,21 +28,21 @@ const UsePaidExpert = [
     logo: imageIndex.Clientsgray,
     logo1: imageIndex.client,
   },
-  {
-    name: ScreenNameEnum.Sessions,
-    Component: Sessions,
-    label: "Sessions",
-    logo: imageIndex.Sessions,
-    logo1: imageIndex.SessionsAtive,
-  },
+  // {
+  //   name: ScreenNameEnum.Sessions,
+  //   Component: Sessions,
+  //   label: "Sessions",
+  //   logo: imageIndex.Sessions,
+  //   logo1: imageIndex.SessionsAtive,
+  // },
   
-  {
-    name: ScreenNameEnum.Earnings,
-    Component: Earnings,
-    label: "Earnings",
-    logo: imageIndex.Earnings,
-    logo1: imageIndex.EarningsAtive,
-  },
+  // {
+  //   name: ScreenNameEnum.Earnings,
+  //   Component: Earnings,
+  //   label: "Earnings",
+  //   logo: imageIndex.Earnings,
+  //   logo1: imageIndex.EarningsAtive,
+  // },
   {
     name: ScreenNameEnum.Profile,
     Component: Profile,

@@ -1,108 +1,72 @@
-
-import { Dimensions, Platform, StyleSheet } from 'react-native';
-const { width } = Dimensions.get("window");
-
+import { StyleSheet, Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f8f8fa',
     paddingHorizontal: 16,
-     backgroundColor: '#fff',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#000',
-    marginTop:12
+    marginTop: 16,
+    color: '#1A1A1A',
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
     marginTop: 16,
     marginBottom: 8,
-    color: '#99A1BE',
+    color: '#7B7B7B',
   },
   itemContainer: {
-    flexDirection: 'row',
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+ flexDirection: 'row',       // ✅ Works on both iOS and Android
+alignItems: 'center',       // ✅ Works on both
+backgroundColor: '#fff',    // ✅ Works on both
+borderRadius: 12,           // ✅ Works on both
+padding: 12,                // ✅ Works on both
+marginBottom: 10,           // ✅ Works on both
+ 
   },
   avatarWrapper: {
-    width: 54,
-    height: 54,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  badge: {
-    position: 'absolute',
-    right: -2,
-    bottom: -2,
-    backgroundColor: '#FFA500',
-    borderRadius: 12,
-    width: 20,
-    height: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 14,
   },
   name: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
-    color: 'black',
-  },
-  subText: {
-    fontSize: 15,
-    color: 'black',
-    fontWeight: '400',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  acceptButton: {
-    backgroundColor: '#8E44AD',
-    paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 24,
-    marginRight: 8,
-  },
-  rejectButton: {
-    backgroundColor: '#F1F4F5',
-    paddingVertical: 8,
-    paddingHorizontal: 24,
-    borderRadius: 24,
-  },
-  acceptText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  rejectText: {
-    color: '#555',
-    fontWeight: '600',
-    fontSize: 14,
+    color: '#1A1A1A',
   },
   time: {
-    marginTop: 6,
     fontSize: 12,
-    color: 'black',
+    color: '#A0A0A0',
+    marginTop: 2,
   },
-  menuButton: {
-    paddingHorizontal: 8,
+  likeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FF6B81',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  menuIcon: {
-    fontSize: 22,
-    color: '#999',
+  likeText: {
+    fontSize: 18,
   },
 });
+
 export default styles;

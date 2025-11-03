@@ -14,7 +14,58 @@ const styles = StyleSheet.create({
       marginBottom: 16,
       paddingVertical: 4,
     },
-    
+      colorfulChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 25,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginRight: 10,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    backgroundColor: "#f9f9f9",
+    shadowOffset: { width: 0, height: 2 },
+   },
+  container1: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+   borderWidth:1,
+  },
+  icon: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
+  colorfulChipText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'black',
+  },
+
+  tagIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    marginRight: 8,
+  },
+
     tagChip: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -27,12 +78,7 @@ const styles = StyleSheet.create({
        
     },
     
-    tagIcon: {
-      width: 20,
-      height: 20,
-      resizeMode: 'contain',
-      marginRight: 8,
-    },
+   
     
     tagText: {
       fontSize: 13.5,
@@ -176,6 +222,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '700',
+  },
+   fab1: {
+    position: 'absolute',
+    right: 20,
+    bottom: 100,
+    backgroundColor: '#F39C12',
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
 });
 

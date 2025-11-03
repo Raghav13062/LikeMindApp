@@ -104,7 +104,7 @@ const { navigation,
     
     }}
     >
-        <Text style={styles.bookButtonText}>Book</Text>
+        <Text style={styles.bookButtonText}>Book Now</Text>
       </TouchableOpacity>
       <BokingConfirmModal
         visible={bookModal}

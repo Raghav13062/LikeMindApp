@@ -30,13 +30,13 @@ const SharedUser = [
     logo1: imageIndex.client,
   },
   
-  {
-    name: ScreenNameEnum.SharedChat,
-    Component: SharedChat,
-    label: "Chat",
-    logo: imageIndex.message,
-    logo1: imageIndex.messageaActive,
-  },
+  // {
+  //   name: ScreenNameEnum.SharedChat,
+  //   Component: SharedChat,
+  //   label: "Chat",
+  //   logo: imageIndex.message,
+  //   logo1: imageIndex.messageaActive,
+  // },
   {
     name: ScreenNameEnum.Profile,
     Component: Profile,

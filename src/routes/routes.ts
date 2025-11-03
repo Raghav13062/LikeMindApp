@@ -14,6 +14,7 @@ import PasswordReset from "../screen/auth/PasswordReset";
 import Splash from "../screen/auth/Splash";
 import UserTypeSelection from "../screen/auth/UserTypeSelection";
 import ChooseRole from "../screen/chooseRole/ChooseRole";
+import OfferExperties from "../screen/OfferExperties";
 import EditEventForm from "../screen/PaidExpert/EditEventForm/EditEventForm";
 import EventForm from "../screen/PaidExpert/EventForm/EventForm";
  import ChangePasswordScreen from "../screen/privay/ChangePassword";
@@ -25,6 +26,7 @@ import SharedChatDetails from "../screen/SharedInterest/SharedChat/SharedChatDet
  import ChatDetails from "../screen/userHome/Chat/ChatDetails/ChatDetails";
 import CommunitiesScreen from "../screen/userHome/CommunitiesScreen/CommunitiesScreen";
 import EditProfile from "../screen/userHome/EditProfile/EditProfile";
+import EventListScreen from "../screen/userHome/EventListScreen";
 import ExpertMarkertPlace from "../screen/userHome/ExpertMarkertPlace/ExpertMarkertPlace";
 import FindAParter from "../screen/userHome/FindAParter/FindAParter";
 import FindAParterDetils from "../screen/userHome/FindAParter/FindAParterDetils/FindAParterDetils";
@@ -201,6 +203,14 @@ const _routes:any = {
       name: ScreenNameEnum.Creategroup,
       Component:Creategroup,
     },
+        {
+      name: ScreenNameEnum.NotificationScreen,
+      Component:NotificationsSetting,
+    },
+       {
+      name: ScreenNameEnum.EventListScreen,
+      Component:EventListScreen,
+    },
     {
       name: ScreenNameEnum.FAQ,
       Component:FAQ,
@@ -231,7 +241,10 @@ const _routes:any = {
       Component:ChooseLocation,
     },
 
-   
+      {
+      name: ScreenNameEnum.OfferExperties,
+      Component:OfferExperties,
+    },
  
   ],
 

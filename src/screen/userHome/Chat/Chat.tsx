@@ -2,134 +2,134 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  FlatList,
   Image,
-   TouchableOpacity,
-  ScrollView,
-  Platform,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import SearchBar from '../../../compoent/SearchBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import StatusBarComponent from '../../../compoent/StatusBarCompoent';
 import CustomHeader from '../../../compoent/CustomHeader';
+import SearchBar from '../../../compoent/SearchBar';
 import imageIndex from '../../../assets/imageIndex';
- import StatusBarComponent from '../../../compoent/StatusBarCompoent';
- import { useNavigation } from '@react-navigation/native';
-import ScreenNameEnum from '../../../routes/screenName.enum';
 import styles from './style';
 import EmptyListComponent from '../../../compoent/EmptyListComponent';
-import { getgroups } from '../../../Api/apiPaidExperti';
-import LoadingModal from '../../../utils/Loader';
-import { SafeAreaView } from 'react-native-safe-area-context';
-// import Icon from 'react-native-vector-icons/Ionicons';
-
- 
-
-const chatData = [
-  { id: '1', name: 'Wilson Lubin', message: 'Typing...', time: '08:00am', typing: true },
-  { id: '2', name: 'Marcus Kenter', message: 'Have you spoken to the delivery...', time: '08:30am', typing: false },
-  { id: '3', name: 'Desirae Dias', message: 'Hello there!', time: '09:00am', typing: false },
-];
+import ScreenNameEnum from '../../../routes/screenName.enum';
+import { useNavigation } from '@react-navigation/native';
 
 const DiscoverGroupsScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [meetupData, setmeetupData] = useState([]);
-  useEffect(()=>{
-    fetchEventS()
-  },[])
+  const [users, setUsers] = useState([]); // all users from API
+  const [filteredUsers, setFilteredUsers] = useState([]); // users after search
+  const [searchText, setSearchText] = useState(''); // user input text
 
-  const fetchEventS = async () => {
+  // ✅ Fetch Users from API
+  const fetchUsers = async () => {
     try {
-       const response = await getgroups(setLoading);
-      if (response?.data) {
-        setmeetupData(response.data)
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.warn('No token found!');
+        setLoading(false);
+        return;
+      }
+
+      const myHeaders = new Headers();
+      myHeaders.append('Authorization', `Bearer ${token}`);
+
+      const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+      };
+
+      const response = await fetch('https://onetenbd.com/likemind/api/get-social-users', requestOptions);
+      const result = await response.json();
+
+      if (result?.success && Array.isArray(result.data)) {
+        setUsers(result.data);
+        setFilteredUsers(result.data); // initially show all users
       } else {
-        console.warn("No response or invalid community data.");
+        console.warn('No valid data received.');
       }
     } catch (error) {
-      console.error("Community fetch error:", error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // ✅ Search filter logic
+  const handleSearch = (text) => {
+    setSearchText(text);
+
+    if (text.trim() === '') {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const lowerText = text.toLowerCase();
+    const filtered = users.filter((user) => {
+      const fullName = `${user.first_name} ${user.last_name || ''}`.toLowerCase();
+      const address = user.address ? user.address.toLowerCase() : '';
+      return fullName.includes(lowerText) || address.includes(lowerText);
+    });
+    setFilteredUsers(filtered);
+  };
+
+  const renderUserCard = ({ item }) => (
+    <TouchableOpacity
+      style={styles.userCard}
+      onPress={() => navigation.navigate(ScreenNameEnum.ChatDetails, { item: item })}
+    >
+      <Image
+        source={{ uri: item.image || 'https://via.placeholder.com/150' }}
+        style={styles.userImage}
+      />
+      <View style={{ flex: 1, marginLeft: 12 }}>
+        <Text style={styles.userName}>
+          {item.first_name} {item.last_name || ''}
+        </Text>
+        
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <SafeAreaView style={{flex:1 ,backgroundColor:"white"}}>
-      <StatusBarComponent/>
-      {loading ? <LoadingModal /> : null}
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <StatusBarComponent />
+      <CustomHeader imageSource={imageIndex.backNavsPuple} label="Chat" />
 
-         <CustomHeader
-                
-                
-                imageSource={imageIndex.backNavsPuple} label="Discover Groups" />
-    <View style={styles.container}>
-    <SearchBar/>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-         <Text style={styles.sectionTitle}>Meetup Group</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 10 }}>
-          {meetupData.map((item) => (
-            <View key={item.id} style={styles.meetupCard}>
-              <Image source={{ uri: item.image }} style={styles.avatar} />
-              <Text style={styles.meetupName}>{item.title}</Text>
-              <Text style={styles.meetupName}>{item.location}</Text>
-              {/* <TouchableOpacity style={styles.connectButton}>
-                <Text style={styles.connectButtonText}>Connect</Text>
-              </TouchableOpacity> */}
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Chats */}
-        <Text style={styles.sectionTitle}>Chats</Text>
-        <FlatList
-              ListEmptyComponent={<EmptyListComponent message="No Chat found." />}
-
-          data={[]}
-          keyExtractor={(item) => item.id}
-          scrollEnabled={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity 
-            
-            onPress={() => navigation.navigate(ScreenNameEnum.ChatDetails)}
-
-            style={styles.chatItem}>
-              <Image source={{ uri:   'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.chatAvatar} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.chatName}>{item.name}</Text>
-                <Text style={[styles.chatMessage, item.typing && { color: '#8E44AD',  }]}>
-                  {item.message}
-                </Text>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.chatTime}>{item.time}</Text>
-                {item.typing && (
-                  <View style={styles.chatBadge}>
-                    <Text style={styles.chatBadgeText}>3</Text>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          )}
+      <View style={styles.container}>
+        {/* ✅ Pass onChange handler to SearchBar */}
+        <SearchBar
+          placeholder="Search users..."
+          value={searchText}
+          onSearchChange={handleSearch}
         />
-      </ScrollView>
 
-      {/* Floating Button */}
-      {/* <TouchableOpacity style={styles.floatingButton} 
-      
-      onPress={()=>navigation.navigate(ScreenNameEnum.CommunitiesScreen)}
-      > 
-        <Image source={imageIndex.addbutt} 
-        style={{
-          height:80,
-          width:80,
-          resizeMode:"contain"
-        }} 
-        />
-       </TouchableOpacity> */}
-    </View>
+        <Text style={styles.sectionTitle}>All Chats</Text>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#8E44AD" style={{ marginTop: 20 }} />
+        ) : (
+          <FlatList
+          showsVerticalScrollIndicator={false}
+            data={filteredUsers}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderUserCard}
+            ListEmptyComponent={<EmptyListComponent message="No users found." />}
+            contentContainerStyle={{ paddingBottom: 50 }}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
-
 
 export default DiscoverGroupsScreen;

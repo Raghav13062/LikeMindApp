@@ -138,18 +138,15 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   overlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    
+    backgroundColor: 'white',
  
     borderTopEndRadius:12,
     borderTopStartRadius:12,
      flexDirection:"row"
   },
   name: {
-    color: '#fff',
+    color: 'black',
     fontSize: 18,
     fontWeight: '700',
   },

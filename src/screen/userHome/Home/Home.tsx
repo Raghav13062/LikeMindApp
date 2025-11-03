@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Image,
   TouchableOpacity,
-   FlatList
+   FlatList,
+   ActivityIndicator
 } from 'react-native';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent';
 import imageIndex from '../../../assets/imageIndex';
@@ -18,6 +19,7 @@ import LoadingModal from '../../../utils/Loader';
 import EmptyListComponent from '../../../compoent/EmptyListComponent';
 import moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
  
 const Home = () => {
   const nav = useNavigation() 
@@ -29,25 +31,175 @@ const Home = () => {
   const features = [
     {
       title: 'Roger Ekstrom',
-      desc: 'Connect with someone who shares your interest',
-      icon: imageIndex.roger,
+      desc: '✨ Expert place” Learn from Experts” (for the marketplace).',
+      icon: imageIndex.leader,
       scree:ScreenNameEnum.ExpertMarkertPlace
     },
     {
-      title: 'Join or Create a community',
-      desc: 'Join clubs or groups built around your passion',
-      icon: imageIndex.join,
+      title: 'Community',
+      desc: '🏠 Join or Build Communities',
+      icon: imageIndex.community,
       scree:ScreenNameEnum.CommunitiesScreen
 
     },
     {
-      title: 'Explore or create events around you',
-      desc: 'See what’s happening near you',
-      icon: imageIndex.calender,
+      title: 'Explore Events ',
+      desc: '🎟 Explore Events & Experiences',
+      icon: imageIndex.conference,
       scree:ScreenNameEnum.CommunitiesScreen
 
     },
   ];
+    const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
+  const fetchGroups = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        setError("No token found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(
+        "https://onetenbd.com/likemind/api/get-groups",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setGroups(result.data);
+      } else {
+        setError(result.message || "Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch groups");
+    } finally {
+      setLoading(false);
+    }
+  };
+const renderGroupItem = ({ item }) => (
+  // <View
+  //   style={{
+  //     flexDirection: 'row',
+  //     alignItems: 'center',
+  //     backgroundColor: '#fff',
+  //     borderRadius: 12,
+  //     padding: 15,
+  //     marginHorizontal: 12,
+  //     marginVertical: 8,
+  //     shadowColor: '#000',
+  //     shadowOffset: { width: 0, height: 2 },
+  //     shadowOpacity: 0.15,
+  //     shadowRadius: 4,
+  //     elevation: 4,
+  //     borderWidth: 0.5,
+  //     borderColor: '#ddd',
+  //   }}>
+  //   <Image
+  //     source={{ uri: item.image }}
+  //     style={{
+  //       width: 60,
+  //       height: 60,
+  //       borderRadius: 30,
+  //     }}
+  //   />
+  //   <View style={{ marginLeft: 15, flex: 1 }}>
+  //     <Text
+  //       style={{
+  //         fontSize: 16,
+  //         fontWeight: '600',
+  //         color: '#222',
+  //         marginBottom: 4,
+  //       }}>
+  //       {item.title}
+  //     </Text>
+  //     <Text
+  //       style={{
+  //         fontSize: 14,
+  //         color: '#777',
+  //       }}>
+  //       {item.location}
+  //     </Text>
+  //   </View>
+  // </View>
+   <View style={[styles.eventCard,{
+    marginTop:12
+   }]}  >
+                <Image
+                  source={{
+                    uri:  item?.image,
+                  }}
+                  style={styles.eventImage}
+                />
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text style={styles.eventTitle}>{item?.title}</Text>
+                                    <Text style={styles.eventTitle}>{item?.location}</Text>
+
+                 <View style={{
+                  flexDirection:"row",
+                  alignItems:"center"
+                }}>
+                {/* <TouchableOpacity style={styles.joinButton} 
+                  onPress={()=>{
+                nav.navigate(ScreenNameEnum.MarketProfileDetails,{
+                  item:item
+                })
+                //  nav.navigate(ScreenNameEnum.JoinSessions)
+                  }}
+                >
+                    <Text style={styles.joinText}>Join Now</Text>
+                  </TouchableOpacity> */}
+                
+                </View>
+              
+                </View>
+                
+              </View>
+);
+
+
+  if (loading) {
+    return (
+      <View style={{
+         flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+      }}>
+        <ActivityIndicator size="large" color="#FFCC00" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{
+         flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+      }}>
+        <Text style={{
+          color: "red",
+    fontSize: 16,
+        }}>{error}</Text>
+      </View>
+    );
+  }
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -57,6 +209,9 @@ const Home = () => {
           <DashBoardHeader />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View  >
+
+ 
+
           {features.map((item:any, index:any) => (
             <TouchableOpacity 
             
@@ -76,6 +231,23 @@ const Home = () => {
 
     
         <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Host Events </Text>
+          
+        </View>
+        
+
+         <FlatList 
+        showsHorizontalScrollIndicator={false}
+      data={groups}
+      keyExtractor={(item) => item.id}
+      horizontal
+      showsVerticalScrollIndicator={false}
+      renderItem={renderGroupItem}
+     />
+
+
+
+  <View style={[styles.sectionHeader,{marginBottom:15}]}>
           <Text style={styles.sectionTitle}>Events happening soon</Text>
           <TouchableOpacity 
             onPress={()=>{
@@ -85,8 +257,6 @@ const Home = () => {
             <Text style={styles.viewAll}>View all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-        </ScrollView>
           <FlatList
         data={event}
         showsHorizontalScrollIndicator={false}

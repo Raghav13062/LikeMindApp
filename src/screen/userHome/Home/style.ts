@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginHorizontal: 3,
     alignItems: 'flex-start',
+    marginLeft:11,
+    marginBottom:11,
   
     ...Platform.select({
       ios: {
@@ -136,8 +138,8 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 5,
+    right: 8,
     
  
     justifyContent: 'center',
