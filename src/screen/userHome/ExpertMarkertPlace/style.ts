@@ -1,119 +1,91 @@
-
-import { Dimensions, StyleSheet } from 'react-native';
-const { width } = Dimensions.get("window");
+import { StyleSheet, Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingHorizontal: 18,
-   },
-  header: {
+    paddingHorizontal: 16,
+  },
+
+  categoryScroll: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 20,
   },
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
+
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 25,
     paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 14,
     marginRight: 10,
-     marginBottom:12
   },
-  headerTitle: {
-    fontWeight: 'bold',
-    fontSize: 18,
+  categoryChipSelected: {
+     backgroundColor: '#ff9500',
   },
-  searchBar: {
-    flexDirection: 'row',
-    backgroundColor: '#f1f1f1',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-    marginBottom: 20,
+  categoryImage: {
+    height: 22,
+    width: 22,
+    borderRadius: 11,
+    marginRight: 8,
   },
-  searchInput: {
-    flex: 1,
-    marginHorizontal: 10,
+  categoryText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+  categoryTextSelected: {
+    color: 'black',
+    fontWeight: '600',
   },
-  sectionTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color:"black"
-  },
-  seeAll: {
-    color: '#8E44AD',
-  },
-  categoryList: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  categoryItem: {
-    alignItems: 'center',
-    marginRight: 20,
-    justifyContent:"center",
-    marginTop:12
-  },
-  categoryIcon: {
-      borderRadius: 11,
-    justifyContent:"center",
-    alignItems:"center" ,
-    height:60,
-     width:65 ,
-   },
-  categoryLabel: {
-    marginTop: 6,
-    fontSize: 12,
-    color:"white"
-  },
+
+  // Card
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
     padding: 12,
-    borderRadius: 12,
     marginBottom: 15,
     alignItems: 'center',
+    borderWidth:0.5,
+    borderColor:'#E0E0E0'
+   
   },
-  avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 10,
+  cardImage: {
+    width: 75,
+    height: 75,
+    borderRadius: 12,
+    backgroundColor: '#EEE',
   },
-  cardInfo: {
-    marginLeft: 12,
+  cardContent: {
     flex: 1,
+    marginLeft: 12,
   },
-  name: {
-    fontWeight: 'bold',
-    fontSize: 15,
-    color:"black"
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E1E1E',
   },
-  role: {
-    fontSize: 12,
-    color: '#677294',
+  cardSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
   },
-  services: {
+  cardDate: {
     fontSize: 12,
     color: '#999',
-    marginTop:2
-   },
+    marginTop: 4,
+  },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 6,
   },
   ratingText: {
-    // marginLeft: 6,
     fontSize: 12,
     color: '#444',
   },
 });
+
 export default styles;

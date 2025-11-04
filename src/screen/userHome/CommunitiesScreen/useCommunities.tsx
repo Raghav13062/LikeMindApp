@@ -1,3 +1,4 @@
+// useCommunities.ts
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -12,65 +13,84 @@ const useCommunities = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [communitiesList, setCommunitiesList] = useState<any[]>([]);
   const [categoryList, setCategoryList] = useState<any[]>([]);
-   const [filteredList, setFilteredList] = useState<any[]>([]);
+  const [filteredList, setFilteredList] = useState<any[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-   useEffect(() => {
+  useEffect(() => {
     fetchCommunities();
     fetchCategories();
   }, []);
 
-  // Filter list by search keyword
+  // ✅ Smart Filter Logic
   useEffect(() => {
-    if (search.trim() === '') {
-      setFilteredList(communitiesList);
-    } else {
-      const filtered = communitiesList.filter(item =>
-        item?.name?.toLowerCase().includes(search.toLowerCase())
+    let filtered = [...communitiesList];
+
+    // Search filter
+    if (search.trim()) {
+      const keyword = search.toLowerCase();
+      filtered = filtered.filter(item =>
+        item?.name?.toLowerCase().includes(keyword) ||
+        item?.description?.toLowerCase().includes(keyword)
       );
-      setFilteredList(filtered);
     }
-  }, [search, communitiesList]);
 
-  // Fetch all communities
-    const fetchCommunities = async () => {
-      try {
-        setIsLoading(true);
-        const response = await UserGetCommunitiesApi(setIsLoading);
-        if (response?.data) {
-          setCommunitiesList(response.data);
-          setFilteredList(response.data);
-        } else {
-          console.warn("No response or invalid community data.");
-        }
-      } catch (error) {
-        console.error("Community fetch error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Category filter
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(item =>
+        selectedCategories.includes(item.category)
+      );
+    }
 
-  // Fetch all categories
-  const fetchCategories = async () => {
+    setFilteredList(filtered);
+  }, [search, communitiesList, selectedCategories]);
+
+  // ✅ Fetch Communities
+  const fetchCommunities = async () => {
     try {
       setIsLoading(true);
-      const response = await UserGetCateoryApi(setIsLoading);
-      if (response?.data) {
-        setCategoryList(response.data);
-      } else {
-        console.warn("No response or invalid category data.");
-      }
+      const response = await UserGetCommunitiesApi(setIsLoading);
+      const data = response?.data || [];
+      setCommunitiesList(data);
+      setFilteredList(data);
     } catch (error) {
-      console.error("Category fetch error:", error);
+      console.error('Community fetch error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Handle community form submission
+  // ✅ Fetch Categories
+  const fetchCategories = async () => {
+    try {
+      const response = await UserGetCateoryApi(setIsLoading);
+      if (response?.data) setCategoryList(response.data);
+    } catch (error) {
+      console.error('Category fetch error:', error);
+    }
+  };
+
+  // ✅ Toggle Category
+  const handleCategorySelect = (categoryName: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(categoryName)
+        ? prev.filter(cat => cat !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
+
+  // ✅ Clear Filters
+  const handleClearFilters = () => {
+    setSelectedCategories([]);
+    setSearch('');
+  };
+
+  // ✅ Add Community
   const handleSubmit = async (formData: any) => {
     try {
+      setIsLoading(true);
       const params = {
         name: formData.name,
         description: formData.description,
@@ -79,17 +99,13 @@ const useCommunities = () => {
         privacy: formData.privacy,
         logo: formData.logo,
       };
-
-      setIsLoading(true);
       const response = await userAddCommunity(params, setIsLoading);
-
       if (response) {
-        setShowCreateModal(false); // Close modal after creation
-        fetchCommunities(); // Refresh list
-        console.log("Community created:", response);
+        fetchCommunities();
+        setShowCreateModal(false);
       }
     } catch (error) {
-      console.error("Error creating community:", error);
+      console.error('Create error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -98,16 +114,19 @@ const useCommunities = () => {
   return {
     navigation,
     isLoading,
-    setIsLoading,
-    showCreateModal,
-    setShowCreateModal,
     search,
     setSearch,
-    communitiesList,
-    setCommunitiesList,
+    showCreateModal,
+    setShowCreateModal,
+    showFilterModal,
+    setShowFilterModal,
     categoryList,
-    handleSubmit,
+    communitiesList,
     filteredList,
+    selectedCategories,
+    handleCategorySelect,
+    handleClearFilters,
+    handleSubmit,
   };
 };
 

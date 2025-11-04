@@ -20,6 +20,7 @@ import EmptyListComponent from '../../../compoent/EmptyListComponent';
 import moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ComingSoon from '../ComingSoon';
  
 const Home = () => {
   const nav = useNavigation() 
@@ -229,7 +230,8 @@ const renderGroupItem = ({ item }) => (
           ))}
         </View>
 
-    
+           <ComingSoon/>
+
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Host Events </Text>
           
@@ -332,14 +334,6 @@ const renderGroupItem = ({ item }) => (
           <Text style={styles.peopleName}>{item?.full_name || "my title"}</Text>
           <Text style={styles.peopleLocation}>{item?.exp_level|| "my title"}</Text>
           <View style={styles.tag}>
-          {/* <Image
-            source={imageIndex.location}
-            style={{
-              height:22,
-              width:22
-            }}
-          />
-             <Text style={styles.tagText}>qq</Text> */}
           </View>
           <TouchableOpacity style={styles.connectButtonPeople} 
           onPress={()=>{

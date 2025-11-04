@@ -31,6 +31,7 @@ import ExpertMarkertPlace from "../screen/userHome/ExpertMarkertPlace/ExpertMark
 import FindAParter from "../screen/userHome/FindAParter/FindAParter";
 import FindAParterDetils from "../screen/userHome/FindAParter/FindAParterDetils/FindAParterDetils";
 import JoinSessions from "../screen/userHome/JoinSessions/JoinSessions";
+import AddComingJoin from "../screen/userHome/Likedyou/AddComingJoin";
 import MarketProfileDetails from "../screen/userHome/MarketProfileDetails/MarketProfileDetails";
 import BasicInformation from "../screen/userHome/ProfieStep/BasicInformation/BasicInformation";
 import FAQ from "../screen/userHome/ProfieStep/FAQ/FAQ";
@@ -244,6 +245,10 @@ const _routes:any = {
       {
       name: ScreenNameEnum.OfferExperties,
       Component:OfferExperties,
+    },
+          {
+      name: ScreenNameEnum.AddComingJoin,
+      Component:AddComingJoin,
     },
  
   ],

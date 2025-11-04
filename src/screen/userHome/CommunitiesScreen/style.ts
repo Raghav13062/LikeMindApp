@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 1,
     overflow: 'hidden',
+    padding: 10,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -146,8 +147,8 @@ const styles = StyleSheet.create({
     }),
   },
   cardImage: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     resizeMode: 'cover', 
     borderRadius:20
   },
@@ -191,8 +192,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     backgroundColor: '#F39C12',
     borderRadius: 20,
-    bottom:11
-  },
+   },
   joinBtnText: {
     color: '#fff',
     fontWeight: '600',
@@ -214,8 +214,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
       },
       android: {
-        elevation: 5,
-      },
+       },
     }),
   },
   fabText: {
@@ -239,8 +238,27 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
       },
       android: {
-        elevation: 5,
+       },
+    }),
+  },
+
+    fab12: {
+    position: 'absolute',
+    right: 20,
+    bottom: 170,
+    backgroundColor: '#F39C12',
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
       },
+      android: {
+       },
     }),
   },
 });

@@ -45,7 +45,7 @@ const Splash: React.FC = () => {
             break;
         }
       } else {
-        navigation.navigate(ScreenNameEnum.ChooseRole);
+        navigation.navigate(ScreenNameEnum.LoginScreen);
       }
     } catch (error) {
       console.error("Error during checkLogout:", error);

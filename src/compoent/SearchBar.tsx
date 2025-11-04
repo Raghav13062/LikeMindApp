@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import imageIndex from "../assets/imageIndex";
 
@@ -12,12 +13,14 @@ interface SearchBarProps {
   placeholder?: string;
   onSearchChange?: (text: string) => void;
   value?: string;
+  onfilter?:any
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder = "Search",
   onSearchChange,
   value,
+  onfilter
 }) => {
   return (
     <View style={styles.searchBar}>
@@ -29,7 +32,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onChangeText={onSearchChange}
         value={value}
       />
+      <TouchableOpacity onPress={onfilter}>
       <Image source={imageIndex.filter} style={styles.icon} resizeMode="cover" />
+      </TouchableOpacity>
     </View>
   );
 };

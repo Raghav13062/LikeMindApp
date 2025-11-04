@@ -13,6 +13,7 @@ enum ScreenNameEnum {
   OfferExperties="OfferExperties",
   ProfileSetup="ProfileSetup",
   LetGetYouStarted="LetGetYouStarted",
+  AddComingJoin="AddComingJoin",
   AddProfilePicture="AddProfilePicture",
   ExpertMarkertPlace ="ExpertMarkertPlace",
   FindAParter="FindAParter",

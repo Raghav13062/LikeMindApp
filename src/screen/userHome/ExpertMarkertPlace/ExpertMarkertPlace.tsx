@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import moment from 'moment';
@@ -26,99 +27,86 @@ export default function ExpertMarkertPlace() {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
- 
-const filteredEvents = useMemo(() => {
-  return event.filter((item: any) => {
-    console.log('Filtering item:', item);
+  const filteredEvents = useMemo(() => {
+    return event.filter((item: any) => {
+      const searchableText = `
+        ${item?.name || ''}
+        ${item?.title || ''}
+        ${item?.about || ''}
+        ${item?.price !== null && item?.price !== undefined ? item?.price : ''}
+      `.toLowerCase();
 
-    // Combine all searchable fields
-    const searchableText = `
-      ${item?.name || ''}
-      ${item?.title || ''}
-      ${item?.about || ''}
-      ${item?.price !== null && item?.price !== undefined ? item?.price : ''}
-    `.toLowerCase();
+      const matchesSearch = searchableText.includes(searchText.toLowerCase());
+      const matchesCategory =
+        !selectedCategory || item.category_id === selectedCategory;
 
-    const matchesSearch = searchableText.includes(searchText.toLowerCase());
-
-    const matchesCategory =
-      !selectedCategory || item.category_id === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
-}, [searchText, event, selectedCategory]);
-
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchText, event, selectedCategory]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       {isLoading && <LoadingModal />}
-
       <StatusBarComponent />
       <CustomHeader
         imageSource={imageIndex.backNavsPuple}
         label="Expert Marketplace"
       />
 
-      {/* ✅ Search bar */}
-      <View style={{ marginTop: 15, marginHorizontal: 10, marginBottom: 12 }}>
+      {/* ✅ Search Bar */}
+      <View style={{ marginTop: 15, marginHorizontal: 16, marginBottom: 10 }}>
         <SearchBar value={searchText} onSearchChange={setSearchText} />
       </View>
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* ✅ Categories */}
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        {/* ✅ Category Chips */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.categoryList}
+          style={styles.categoryScroll}
         >
-          {eventCategories.map((cat: any, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() =>
-                setSelectedCategory(
-                  selectedCategory === cat.id ? null : cat.id
-                )
-              }
-              style={[
-                styles.chip,
-                {
-                  backgroundColor:
-                    selectedCategory === cat.id
-                      ? "#f9f9f9"
-                      : "#f9f9f9",
-                },
-              ]}
-            >
-
-              <View style={styles.categoryIcon}>
+          {eventCategories.map((cat: any, index) => {
+            const isSelected = selectedCategory === cat.id;
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  setSelectedCategory(isSelected ? null : cat.id)
+                }
+                style={[
+                  styles.categoryChip,
+                  isSelected && styles.categoryChipSelected,
+                ]}
+              >
                 <Image
                   source={{ uri: cat.image }}
-                  style={{ height: 20, width: 20, marginRight: 8 }}
+                  style={styles.categoryImage}
                 />
                 <Text
-                  style={{
-                    fontSize: 15,
-                    marginTop: 5,
-                    fontWeight: '600',
-                    color: 'black',
-                  }}
+                  style={[
+                    styles.categoryText,
+                    isSelected && styles.categoryTextSelected,
+                  ]}
                 >
                   {cat.name}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         {/* ✅ Event List */}
         <FlatList
           data={filteredEvents}
-          ListEmptyComponent={
-            <EmptyListComponent message="No Event found." />
-          }
+          ListEmptyComponent={<EmptyListComponent message="No Event Found" />}
+          scrollEnabled={false}
+          contentContainerStyle={{ paddingBottom: 60 }}
           renderItem={({ item }) => {
-            const rawDate = item?.created_at;
-            const formattedDate = moment(rawDate).format(
+            const formattedDate = moment(item?.created_at).format(
               'ddd, MMM DD – h:mm A'
             );
 
@@ -130,22 +118,23 @@ const filteredEvents = useMemo(() => {
                   })
                 }
                 style={styles.card}
+                activeOpacity={0.8}
               >
                 <Image
                   source={{ uri: item?.image }}
-                  style={styles.avatar}
+                  style={styles.cardImage}
                 />
-                <View style={styles.cardInfo}>
-                  <Text style={styles.name}>{item?.name}</Text>
-                  <Text style={styles.role}>{item?.title}</Text>
-                  <Text style={styles.date}>{formattedDate}</Text>
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle}>{item?.name}</Text>
+                  <Text style={styles.cardSubtitle}>{item?.title}</Text>
+                  <Text style={styles.cardDate}>{formattedDate}</Text>
                   <View style={styles.ratingRow}>
                     <Image
                       source={imageIndex.star}
-                      style={{ height: 12, width: 12 }}
+                      style={{ height: 12, width: 12, marginRight: 5 }}
                     />
                     <Text style={styles.ratingText}>
-                      {item.rating || '00'} ({item.views || '0'} views)
+                      {item.rating || '0.0'} ★ ({item.views || '0'} views)
                     </Text>
                   </View>
                 </View>

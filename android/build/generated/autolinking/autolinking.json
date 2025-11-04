@@ -331,6 +331,31 @@
           "isPureCxxDependency": false
         }
       }
+    },
+    "react-native-vector-icons": {
+      "root": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-vector-icons",
+      "name": "react-native-vector-icons",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-vector-icons/RNVectorIcons.podspec",
+          "version": "10.3.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-vector-icons/android",
+          "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
+          "packageInstance": "new VectorIconsPackage()",
+          "buildTypes": [],
+          "libraryName": "RNVectorIconsSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
     }
   },
   "commands": [
@@ -788,11 +813,7 @@
   "project": {
     "ios": {
       "sourceDir": "/Users/raghav/Documents/aman_work/LikeMind/ios",
-      "xcodeProject": {
-        "name": "ScrapApp.xcworkspace",
-        "path": ".",
-        "isWorkspace": true
-      },
+      "xcodeProject": null,
       "assets": []
     },
     "android": {
