@@ -47,10 +47,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    height: 50,
+    height: 55,
     marginVertical: 15,
-    marginHorizontal: 8,
-    ...Platform.select({
+     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -58,8 +57,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,       // slightly wider blur
       },
       android: {
-        elevation: 6,          // bumps the depth
-        shadowColor: '#000',   // helps on Android 12+
+         shadowColor: '#000',   // helps on Android 12+
       },
     }),
   

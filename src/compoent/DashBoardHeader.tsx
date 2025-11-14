@@ -21,7 +21,9 @@ const DashBoardHeader = () => {
       {/* Right side: Profile Icon */}
       <TouchableOpacity
         style={styles.profileWrapper}
-        onPress={() => nav.navigate(ScreenNameEnum.InformationStep)}
+        // onPress={() => nav.navigate(ScreenNameEnum.InformationStep)}
+                onPress={() => nav.navigate(ScreenNameEnum.EditProfile)}
+
       >
         <Image
           source={imageIndex.profile}

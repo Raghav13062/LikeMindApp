@@ -1,5 +1,5 @@
-// UpcomingEventsScreen.js
-import React, { useState } from 'react';
+// UpcomingEventsScreen.js (Simplified & Compact UI)
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-   Dimensions,
+  Dimensions,
 } from 'react-native';
-import StatusBarComponent from '../../../compoent/StatusBarCompoent';
+import StatusBarComponent from '../../../compoent/StatusBarCompoent'; 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
@@ -19,68 +19,97 @@ const UpcomingEventsScreen = () => {
   const [events, setEvents] = useState([
     {
       id: '1',
-      title: 'Club Meetup',
+      title: 'Club Meetup for Tech Enthusiasts',
       type: 'Club',
       hostName: 'Ram Gurjar',
       image: 'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=1200',
       date: 'Nov 10, 2025',
       time: '11:00 AM',
-      joined: true,
+      joined: true, // ✅ शामिल
+      joinedCount: 45, // 👥 शामिल सदस्य
     },
      
     {
       id: '2',
-      title: 'Cloud Workshop — ',
+      title: 'Cloud Workshop — Learn AWS Basics',
       type: 'Workshop',
       hostName: 'Rahul Singh',
       image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200',
       date: 'Nov 20, 2025',
       time: '5:00 PM',
-      joined: true,
+      joined: true, // ✅ शामिल
+      joinedCount: 120, // 👥 शामिल सदस्य
+    },
+    {
+      id: '3',
+      title: 'React Native Advanced Class',
+      type: 'Class',
+      hostName: 'Priya Sharma',
+      image: 'https://images.unsplash.com/photo-1509062997943-f8ed36b76174?w=1200',
+      date: 'Nov 25, 2025',
+      time: '7:30 PM',
+      joined: false, // ❌ शामिल नहीं (यह नहीं दिखेगा)
+      joinedCount: 80, 
     },
   ]);
 
-  const handleJoin = (id) => {
-    setEvents((prev) =>
-      prev.map((e) =>
-        e.id === id ? { ...e, joined: true } : e
-      )
-    );
-  };
-
+  // केवल जॉइन किए गए इवेंट्स को फ़िल्टर करें
+  const joinedEvents = useMemo(() => 
+    events.filter(e => e.joined), 
+    [events]
+  );
+  
   const renderEventCard = ({ item }) => {
     const typeColors = {
       Club: '#2b6ef6',
       Class: '#22c55e',
-      Workshop: '#f59e0b',
+      Workshop: '#F39C12',
     };
 
     return (
-      <View style={styles.card}>
-        <Image source={{ uri: item.image }} style={styles.image} />
-        <View style={styles.cardContent}>
-          <View style={styles.typeBadgeWrapper}>
+      <View style={[styles.card, styles.joinedCard]}> 
+        {/* 1. कॉम्पैक्ट इमेज (बाएँ तरफ) */}
+        <Image 
+          source={{ uri: item.image }} 
+          style={styles.compactImage} 
+        />
+        
+        {/* 2. कंटेंट सेक्शन (दाएँ तरफ) */}
+        <View style={styles.compactContent}>
+          
+          {/* टाइप और टाइटल */}
+          <View style={styles.typeAndTitleRow}>
             <Text style={[styles.typeBadge, { backgroundColor: typeColors[item.type] || '#aaa' }]}>
               {item.type}
             </Text>
-          </View>
-          <Text style={styles.title}>{item.title}</Text>
-
-          <View style={styles.row}>
-            <Text style={styles.metaText}>👤 {item.hostName}</Text>
-            <Text style={styles.metaText}>📅 {item.date}</Text>
-          </View>
-          <Text style={styles.metaText}>⏰ {item.time}</Text>
-
-          <TouchableOpacity
-            style={[styles.joinBtn, item.joined && styles.joinedBtn]}
-            disabled={item.joined}
-            onPress={() => handleJoin(item.id)}
-          >
-            <Text style={[styles.joinText, item.joined && styles.joinedText]}>
-              {item.joined ? 'Joined ✅' : 'Join Now'}
+            <Text style={styles.title} numberOfLines={2}>
+              {item.title}
             </Text>
-          </TouchableOpacity>
+          </View>
+          
+          {/* होस्ट का नाम */}
+          <Text style={styles.metaTextHost} numberOfLines={1}>
+            👤 Hosted by: **{item.hostName}**
+          </Text>
+
+          {/* 3. डेट, टाइम, और JOINED COUNT */}
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+                <Text style={styles.statValue}>📅 {item.date}</Text>
+            </View>
+            <View style={styles.statItem}>
+                <Text style={styles.statValue}>👥 {item.joinedCount}</Text>
+                <Text style={styles.statLabel}>Joined</Text>
+            </View>
+          </View>
+
+          {/* 4. व्यू डिटेल्स बटन (सिंपल) */}
+          {/* <TouchableOpacity
+            style={styles.viewDetailsBtn}
+            onPress={() => console.log('View Details for:', item.id)}
+          >
+            <Text style={styles.viewDetailsText}>View Details</Text> 
+          </TouchableOpacity> */}
         </View>
       </View>
     );
@@ -89,14 +118,19 @@ const UpcomingEventsScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBarComponent/>
-      <Text style={styles.header}>Joined Events</Text>
-      <FlatList
-        data={events}
-        keyExtractor={(item) => item.id}
-        renderItem={renderEventCard}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      <Text style={[styles.header, { color: '#F39C12' }]}>My Joined Events</Text> 
+
+      {joinedEvents.length === 0 ? (
+        <Text style={styles.emptyText}>You haven't joined any events yet.</Text>
+      ) : (
+        <FlatList
+          data={joinedEvents} 
+          keyExtractor={(item) => item.id}
+          renderItem={renderEventCard}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -109,76 +143,112 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f6fa',
   },
   header: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginVertical: 12,
+    fontSize: 20,
+    fontWeight: '800', 
+    marginVertical: 18,
     marginLeft: 16,
-    color: '#1e293b',
    },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 50,
+    fontSize: 16,
+    color: '#64748b',
+    paddingHorizontal: 20,
+  },
   listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 32,
   },
+  // --- कॉम्पैक्ट कार्ड स्टाइल ---
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 14,
-    marginBottom: 18,
+    borderRadius: 12,
+    marginBottom: 15, // मार्जिन कम किया
     overflow: 'hidden',
+    borderWidth: 1, 
+    borderColor: '#e5e7eb',
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowOpacity: 0.05, // शैडो कम की
+    shadowRadius: 6, 
     shadowOffset: { width: 0, height: 3 },
-   },
-  image: {
-    width: CARD_WIDTH,
-    height: 100,
+    
+    // कार्ड को कॉम्पैक्ट बनाने के लिए FlexRow
+    flexDirection: 'row', 
+    padding: 10,
+  },
+  joinedCard: {
+    borderColor: '#F39C12', // नारंगी बॉर्डर
+    borderWidth: 2,
+  },
+  compactImage: {
+    width: 80, // इमेज की चौड़ाई कम की
+    height: 80, // इमेज की ऊँचाई कम की
+    borderRadius: 8,
     resizeMode: 'cover',
+    marginRight: 10,
   },
-  cardContent: {
-    padding: 12,
+  compactContent: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
-  typeBadgeWrapper: {
-    alignItems: 'flex-start',
+  typeAndTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   typeBadge: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 8,
+    fontSize: 10, // फ़ॉन्ट साइज कम किया
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginRight: 8,
   },
   title: {
-    fontSize: 16,
+    fontSize: 15, // टाइटल फ़ॉन्ट साइज कम किया
     fontWeight: '700',
     color: '#111827',
+    flexShrink: 1, // टाइटल को छोटा होने की अनुमति
+  },
+  metaTextHost: {
+    fontSize: 12, // होस्ट फ़ॉन्ट साइज कम किया
+    color: '#475569',
     marginBottom: 6,
   },
-  row: {
+  // स्टेटस रो: डेट और जॉइन काउंट
+  statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 10,
   },
-  metaText: {
-    fontSize: 13,
-    color: '#475569',
-  },
-  joinBtn: {
-    backgroundColor: '#2563eb',
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginTop: 12,
+  statItem: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  joinText: {
-    color: '#fff',
+  statValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#111827',
+    marginRight: 10,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#64748b',
+    marginLeft: -8, // थोड़ा करीब लाने के लिए
+  },
+  // व्यू डिटेल्स बटन (छोटा और सरल)
+  viewDetailsBtn: {
+    backgroundColor: '#F39C12', 
+    paddingVertical: 8, // पैडिंग कम की
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  viewDetailsText: {
+    color: '#fff', 
     fontWeight: '700',
-  },
-  joinedBtn: {
-    backgroundColor: '#e2e8f0',
-  },
-  joinedText: {
-    color: '#475569',
+    fontSize: 13, // फ़ॉन्ट साइज कम किया
   },
 });

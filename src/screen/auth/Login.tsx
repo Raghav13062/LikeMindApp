@@ -99,8 +99,7 @@ export default function Login() {
         // roleType:role,
         navigation: navigation,
       };
-      console.log("params",params)
-      const response = await LoginCustomer(params, setLoading,dispatch);
+       const response = await LoginCustomer(params, setLoading,dispatch);
       if (response.status == '1') {
         setLoading(false);
         setToastMessage(response?.message); // ✅ Set success message

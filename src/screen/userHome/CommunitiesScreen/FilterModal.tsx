@@ -8,6 +8,8 @@ import {
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 interface FilterModalProps {
@@ -17,6 +19,8 @@ interface FilterModalProps {
   selectedCategories: string[];
   onCategorySelect: (categoryName: string) => void;
   onClearFilters: () => void;
+  // ✅ फ़िल्टर लागू होने के बाद प्रदर्शित होने वाले आइटम्स की संख्या
+  appliedCount: number; 
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -26,154 +30,266 @@ const FilterModal: React.FC<FilterModalProps> = ({
   selectedCategories,
   onCategorySelect,
   onClearFilters,
+  appliedCount, // ✅ प्रॉप को स्वीकार किया गया
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Search/Filter logic
   const filteredCategories = categories.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const numSelectedFilters = selectedCategories.length;
+  const isClearDisabled = numSelectedFilters === 0;
 
   return (
     <Modal
       visible={visible}
       animationType="slide"
       transparent={true}
-      // 🔒 Disable swipe-down close (on iOS)
       presentationStyle="overFullScreen"
-      onRequestClose={() => {}} // disable hardware back button close (optional)
+      onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        {/* Prevent tap outside from closing */}
-        <TouchableWithoutFeedback>
-          <View style={styles.modalContent}>
-            <Text style={styles.title}>Filter by Category</Text>
-            <FlatList
-              data={filteredCategories}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              renderItem={({ item }) => {
-                const selected = selectedCategories.includes(item.name);
-                return (
-                  <TouchableOpacity
-                    style={[
-                      styles.categoryItem,
-                      selected && styles.categoryItemSelected
-                    ]}
-                    onPress={() => onCategorySelect(item.name)}
-                  >
-                    <Text
-                      style={[
-                        styles.categoryText,
-                        selected && styles.categoryTextSelected
-                      ]}
-                    >
-                      {item.name}
-                    </Text>
-                    {selected && <Text style={styles.checkmark}>✓</Text>}
-                  </TouchableOpacity>
-                );
-              }}
-            />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingContainer}
+      >
+        {/* बाहर टैप करने पर बंद करने के लिए */}
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.overlay}>
+            {/* Modal Content - Prevent tap outside from closing on this specific view */}
+            <TouchableWithoutFeedback> 
+              <View style={styles.modalContent}>
+                
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>Filter by Category</Text>
+                    {/* Close Button */}
+                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>✕</Text>
+                    </TouchableOpacity>
+                </View>
 
-            {/* Footer Buttons */}
-            <View style={styles.footer}>
-              <TouchableOpacity
-                style={[styles.footerButton, styles.clearButton]}
-                onPress={onClearFilters}
-              >
-                <Text style={styles.clearText}>Clear All</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.footerButton, styles.applyButton]}
-                onPress={onClose}
-              >
-                <Text style={styles.applyText}>Done</Text>
-              </TouchableOpacity>
-            </View>
+                {/* Search Input */}
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search categories..."
+                    placeholderTextColor="#999"
+                    value={searchTerm}
+                    onChangeText={setSearchTerm}
+                />
+                
+                {/* Category List */}
+                <FlatList
+                    data={filteredCategories}
+                    keyExtractor={(item) => item.id.toString()}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.listContainer}
+                    renderItem={({ item }) => {
+                        const selected = selectedCategories.includes(item.name);
+                        return (
+                            <TouchableOpacity
+                                style={styles.categoryItem}
+                                onPress={() => onCategorySelect(item.name)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.categoryText,
+                                        selected && styles.categoryTextSelected
+                                    ]}
+                                >
+                                    {item.name}
+                                </Text>
+                                {/* Custom Checkbox Style */}
+                                <View style={[
+                                    styles.checkbox, 
+                                    selected && styles.checkboxSelected
+                                ]}>
+                                    {selected && <Text style={styles.checkmark}>✓</Text>}
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    }}
+                    ListEmptyComponent={() => (
+                        <Text style={styles.emptyText}>No categories found.</Text>
+                    )}
+                />
+
+                {/* Footer Buttons */}
+                <View style={styles.footer}>
+                    {/* Clear All Button */}
+                    <TouchableOpacity
+                        style={[styles.footerButton, styles.clearButton, isClearDisabled && styles.clearButtonDisabled]}
+                        onPress={onClearFilters}
+                        disabled={isClearDisabled}
+                    >
+                        <Text style={[styles.clearText, isClearDisabled && styles.clearTextDisabled]}>Clear All</Text>
+                    </TouchableOpacity>
+
+                    {/* Apply/Done Button */}
+                    <TouchableOpacity
+                        style={[styles.footerButton, styles.applyButton]}
+                        // Done बटन केवल Modal को बंद करता है, क्योंकि फ़िल्टरिंग पहले ही लागू हो चुकी है।
+                        onPress={onClose} 
+                    >
+                        <Text style={styles.applyText}>
+                            Show {appliedCount} {appliedCount === 1 ? 'Item' : 'Items'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+              </View>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
 
+// Styles remain the same
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 16,
-    maxHeight: '85%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  searchInput: {
-    backgroundColor: '#f3f3f3',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-    fontSize: 16,
-    color: '#333',
-  },
-  categoryItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  categoryItemSelected: {
-    backgroundColor: '#fff5e6',
-  },
-  categoryText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  categoryTextSelected: {
-    color: '#ff9500',
-    fontWeight: '600',
-  },
-  checkmark: {
-    color: '#ff9500',
-    fontWeight: 'bold',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-  },
-  footerButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    marginHorizontal: 5,
-  },
-  clearButton: {
-    backgroundColor: '#f3f3f3',
-  },
-  applyButton: {
-    backgroundColor: '#ff9500',
-  },
-  clearText: {
-    textAlign: 'center',
-    color: '#555',
-    fontWeight: '500',
-  },
-  applyText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: '600',
-  },
+    keyboardAvoidingContainer: {
+        flex: 1,
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingHorizontal: 20,
+        paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+        maxHeight: '85%',
+        width: '100%',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#333',
+    },
+    closeButton: {
+        position: 'absolute',
+        right: 0,
+        padding: 5,
+        zIndex: 1,
+    },
+    closeButtonText: {
+        fontSize: 22,
+        color: '#999',
+    },
+    searchInput: {
+        backgroundColor: '#f5f5f5',
+        borderRadius: 10,
+        padding: 12,
+        marginBottom: 15,
+        fontSize: 16,
+        color: '#333',
+        borderWidth: 1,
+        borderColor: '#eee',
+    },
+    listContainer: {
+        paddingBottom: 20,
+    },
+    categoryItem: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+    },
+    categoryText: {
+        fontSize: 16,
+        color: '#333',
+        flexShrink: 1,
+    },
+    categoryTextSelected: {
+        color: '#FF9800',
+        fontWeight: '600',
+    },
+    checkbox: {
+        height: 24,
+        width: 24,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkboxSelected: {
+        borderColor: '#FF9800',
+        backgroundColor: '#FF9800',
+    },
+    checkmark: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginTop: -2,
+    },
+    emptyText: {
+        textAlign: 'center',
+        paddingVertical: 40,
+        fontSize: 16,
+        color: '#999',
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 15,
+        borderTopWidth: 1,
+        borderTopColor: '#f0f0f0',
+        marginHorizontal: -20,
+        paddingHorizontal: 20,
+    },
+    footerButton: {
+        flex: 1,
+        padding: 14,
+        borderRadius: 10,
+        marginHorizontal: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: 50,
+    },
+    clearButton: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    clearButtonDisabled: {
+        opacity: 0.6,
+    },
+    applyButton: {
+        backgroundColor: '#FF9800',
+        marginLeft: 10,
+    },
+    clearText: {
+        textAlign: 'center',
+        color: '#555',
+        fontWeight: '600',
+        fontSize: 16,
+    },
+    clearTextDisabled: {
+        color: '#aaa',
+    },
+    applyText: {
+        textAlign: 'center',
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
 });
 
 export default FilterModal;

@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   yesButton: {
-    backgroundColor: '#150149',
+    backgroundColor: '#FFCC00',
     padding: 10,
     borderRadius: 8,
     width: '45%',

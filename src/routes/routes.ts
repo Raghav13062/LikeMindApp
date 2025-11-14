@@ -1,8 +1,8 @@
   import ChooseLocation from "../helper/ChooseLocation";
-import PaidExpertTab from "../navigators/PaidExpertTab.tsx/PaidExpertTab";
+ import PaidExpertTab from "../navigators/PaidExpertTab.tsx/PaidExpertTab";
 import SharedTabNavigator from "../navigators/SharedTabNavigator/SharedTabNavigator";
 import TabNavigator from "../navigators/UserTabNavigator.tsx/TabNavigator";
-import ProfileSetup from "../screen/ Profile/ProfileSetup/ ProfileSetup";
+ import ProfileSetup from "../screen/ Profile/ProfileSetup/ ProfileSetup";
 import AddProfilePicture from "../screen/auth/AddProfilePicture";
  import CreatePassword from "../screen/auth/CreateNewPassword";
 import LetGetYouStarted from "../screen/auth/LetGetYouStarted";
@@ -45,7 +45,9 @@ import ProfilePhots from "../screen/userHome/ProfieStep/ProfilePhots/ProfilePhot
 
 const _routes:any = {
   REGISTRATION_ROUTE: [
-    {
+  
+
+      {
       name: ScreenNameEnum.SPLASH_SCREEN,
       Component: Splash,
     },

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: '100%',
         position: 'relative',
-        marginHorizontal:15
+        marginHorizontal:8
         
     },
     button: {

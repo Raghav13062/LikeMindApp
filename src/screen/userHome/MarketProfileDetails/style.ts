@@ -1,103 +1,119 @@
+import { StyleSheet, Dimensions } from "react-native";
 
-import { Dimensions, Platform, StyleSheet } from 'react-native';
-const { width } = Dimensions.get("window");
-
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 30,
-    backgroundColor: '#fff',
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'white',
   },
-  header: {
+  container: {
+    // Allows content to scroll and provides padding for the floating button
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 100, 
+  },
+  
+  // Profile Details
+  name: {
+    fontSize: 28, // Slightly larger
+    fontWeight: '800', // Bolder
+    color: '#1a1a1a', // Dark text for high contrast
+    marginBottom: 5,
+  },
+  role: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+  },
+
+  // Rating Section
+  ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    justifyContent: 'space-between',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignSelf: 'center',
-    marginBottom: 15,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    textAlign: 'center',
-  },
-  role: {
-    fontSize: 14,
-    color: '#777',
-    textAlign: 'center',
-    marginBottom: 8,
-    marginTop:3
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
+   },
   starText: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#FFCC00', // Vibrant Gold color for stars
+    marginRight: 5,
   },
   ratingText: {
     fontSize: 14,
-    color: '#777',
-    marginLeft:3
+    color: '#999',
+    marginLeft: 5, // Space out from stars
+    fontWeight: '500',
   },
+
+  // About & Service Sections
   section: {
-    marginBottom: 20,
+    width: '100%',
+    marginTop: 15,
+    marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 18, // Slightly larger title
     fontWeight: '700',
-    color: 'black',
-    marginBottom: 8,
+    color: '#F39C12', // Primary purple color
+    marginBottom: 10,
   },
   sectionText: {
-    fontSize: 14,
-    color: '#444',
-    lineHeight: 20,
+    fontSize: 16,
+    color: '#555',
+    lineHeight: 24,
+    textAlign: 'justify', // Make it cleaner
   },
+
+  // Services & Pricing Rows
   priceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee', // Light separator
+    paddingRight: 5,
+  },
+  priceIcon: {
+    height: 22,
+    width: 22,
+    tintColor: '#4A0080', // Tint icon with primary color
   },
   priceLabel: {
     flex: 1,
-    fontSize: 14,
-    color: '#000',
-    marginLeft: 6,
+    fontSize: 16,
+    color: '#555',
+    marginLeft: 15, // Increased margin for better separation
   },
   priceValue: {
-    fontSize: 14,
-    color: '#F29C1F',
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '600', // Very bold
+    color: 'black', // Dark Purple for emphasis (Fixed from 'gray')
   },
+  
+  // Book Button (Fixed at the bottom for a floating effect)
   bookButton: {
-    backgroundColor: '#F29C1F',
-    borderRadius: 8,
-    paddingVertical: 14,
+    position: 'absolute',
+    bottom: 30, // Space from the bottom edge
+    left: 20,
+    right: 20,
+    backgroundColor: '#F39C12', // Vibrant Gold/Yellow for action
+    paddingVertical: 18,
     alignItems: 'center',
-    marginTop: 10,
-    marginHorizontal:15,
-    marginBottom:15
-  },
+    justifyContent: 'center',
+    borderRadius: 12,
+    // Shadow for a "floating" feel
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 }, // Stronger shadow
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+   },
   bookButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
+    color: 'white', // Dark text to contrast with Gold button
+    fontSize: 15,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
 });
+
 export default styles;

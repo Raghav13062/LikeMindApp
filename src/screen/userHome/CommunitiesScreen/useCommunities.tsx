@@ -68,8 +68,7 @@ const useCommunities = () => {
       const response = await UserGetCateoryApi(setIsLoading);
       if (response?.data) setCategoryList(response.data);
     } catch (error) {
-      console.error('Category fetch error:', error);
-    }
+     }
   };
 
   // ✅ Toggle Category

@@ -8,8 +8,7 @@ import { persistor, store } from '../redux/store';
 import Toast from 'react-native-toast-message';
 import toastConfig from '../utils/customToast';
 import NetInfo from '@react-native-community/netinfo';
-import NetworkStatusModal from '../compoent/NetworkStatusModal';
-
+ 
 const AppNavigator: React.FC = () => {
   const [isConnected, setIsConnected] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);

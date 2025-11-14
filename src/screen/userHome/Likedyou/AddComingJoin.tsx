@@ -207,8 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#CCC',
-    alignItems: 'center',
-  },
+   },
   activeToggle: {
     backgroundColor: '#ff9500',
     borderColor: '#ff9500',
