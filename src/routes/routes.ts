@@ -1,7 +1,5 @@
   import ChooseLocation from "../helper/ChooseLocation";
- import PaidExpertTab from "../navigators/PaidExpertTab.tsx/PaidExpertTab";
-import SharedTabNavigator from "../navigators/SharedTabNavigator/SharedTabNavigator";
-import TabNavigator from "../navigators/UserTabNavigator.tsx/TabNavigator";
+ import TabNavigator from "../navigators/UserTabNavigator.tsx/TabNavigator";
  import ProfileSetup from "../screen/ Profile/ProfileSetup/ ProfileSetup";
 import AddProfilePicture from "../screen/auth/AddProfilePicture";
  import CreatePassword from "../screen/auth/CreateNewPassword";
@@ -121,21 +119,7 @@ const _routes:any = {
       name: ScreenNameEnum.TabNavigator,
       Component:TabNavigator,
     },
-    
-    {
-      name: ScreenNameEnum.PaidExpertTab,
-      Component:PaidExpertTab,
-    },
-    
-    
-    {
-      name: ScreenNameEnum.SharedTabNavigator,
-      Component:SharedTabNavigator,
-    },
-    
-    
-  
-   
+     
     {
       name: ScreenNameEnum.LegalPoliciesScreen,
       Component:LegalPoliciesScreen,

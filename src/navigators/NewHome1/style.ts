@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
   },
   unreadText: {
-    color: '#fff',
+    color: 'black',
     fontSize: 12,
     fontWeight: 'bold',
   },

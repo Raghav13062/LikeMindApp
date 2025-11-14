@@ -1,176 +1,4 @@
-// // CommunitiesScreen.tsx
-// import React from 'react';
-// import {
-//   View,
-//   Text,
-//   FlatList,
-//   TouchableOpacity,
-//   Image,
-//   ScrollView,
-// } from 'react-native';
-// import CreateCommunityModal from '../../../compoent/CreateCommunityModal';
-// import SearchBar from '../../../compoent/SearchBar';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import StatusBarComponent from '../../../compoent/StatusBarCompoent';
-// import styles from './style';
-// import useCommunities from './useCommunities';
-// import LoadingModal from '../../../utils/Loader';
-// import EmptyListComponent from '../../../compoent/EmptyListComponent';
-// import CustomHeader from '../../../compoent/CustomHeader';
-// import imageIndex from '../../../assets/imageIndex';
-// import ScreenNameEnum from '../../../routes/screenName.enum';
-// import FilterModal from './FilterModal';
-
-// export default function CommunitiesScreen() {
-//   const {
-//     navigation,
-//     isLoading,
-//     handleSubmit,
-//     categoryList,
-//     filteredList,
-//     showCreateModal,
-//     setShowCreateModal,
-//     search,
-//     setSearch,
-//     showFilterModal,
-//     setShowFilterModal,
-//     selectedCategories,
-//     handleCategorySelect,
-//     handleClearFilters,
-//   } = useCommunities();
-
-// const renderCommunityCard = ({ item }: any, setShowCreateModal: any) => {
-//   return (
-//     <View style={styles.card}>
-//       {/* Image Section */}
-//       <Image source={{ uri: item.image }} style={styles.cardImage} />
-
-//       {/* Content Section */}
-//       <View style={styles.cardContent}>
-//         <Text style={styles.cardTitle}>{item?.name}</Text>
-//          <Text style={styles.cardDescription} numberOfLines={2}>
-//           {item?.description || 'New community available! Join now.'}
-//         </Text>
-
-//         {/* Tag Chip */}
-//         {item?.tag && (
-//           <View style={styles.chip}>
-//             <Text style={styles.chipText}>{item?.tag}</Text>
-//           </View>
-//         )}
-//       </View>
-
-//       {/* Join Button */}
-//       <TouchableOpacity
-//         style={styles.joinBtn}
-//         onPress={() => setShowCreateModal(true)}
-//       >
-//         <Text style={styles.joinBtnText}>Join</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <StatusBarComponent />
-//       <CustomHeader imageSource={imageIndex.backorange} label="Communities" />
-      
-//       <View style={{ paddingHorizontal: 16, marginTop: 15 }}>
-//         {isLoading ? <LoadingModal /> : null}
-        
-//         <SearchBar
-//           value={search}
-//           onSearchChange={setSearch}
-//           onfilter={() => setShowFilterModal(true)} // ✅ Filter button click पर modal show होगा
-//         />
-
-//         <ScrollView showsVerticalScrollIndicator={false}>
-//            <FlatList
-//             data={categoryList}
-//             keyExtractor={(item: any) => item.id.toString()}
-//             horizontal
-//             style={{ marginTop: 20 }}
-//             showsHorizontalScrollIndicator={false}
-//             ListEmptyComponent={<EmptyListComponent message="No categories found." />}
-//             renderItem={({ item }) => (
-//               <TouchableOpacity
-//                 style={[
-//                   styles.colorfulChip,
-//                   selectedCategories.includes(item.name) && styles.selectedChip
-//                 ]}
-//                 activeOpacity={0.85}
-//                 onPress={() => handleCategorySelect(item.name)}
-//               >
-//                 <Image
-//                   source={{ uri: "https://cdn-icons-png.flaticon.com/256/6724/6724239.png" }}
-//                   style={styles.tagIcon}
-//                 />
-//                 <Text style={[
-//                   styles.colorfulChipText,
-//                   selectedCategories.includes(item.name) && styles.selectedChipText
-//                 ]}>
-//                   {item?.name}
-//                 </Text>
-//               </TouchableOpacity>
-//             )}
-//           />
-
-//           <FlatList
-//             data={filteredList}
-//             keyExtractor={(item, index) => index.toString()}
-//             renderItem={renderCommunityCard}
-//             contentContainerStyle={styles.list}
-//             style={{ marginTop: 30 }}
-//             showsVerticalScrollIndicator={false}
-//             ListEmptyComponent={<EmptyListComponent message="No communities found." />}
-//           />
-//         </ScrollView>
-//       </View>
-
-//       {/* Filter Modal - ✅ Corrected */}
-     
-
-//       {/* FAB Buttons */}
-//       <TouchableOpacity
-//         style={styles.fab}
-//         onPress={() => setShowCreateModal(true)}
-//         activeOpacity={0.85}
-//       >
-//         <Text style={styles.fabText}> 👥 Add Community</Text>
-//       </TouchableOpacity>
-
- 
-// {/* 
-//         <TouchableOpacity
-//         style={styles.fab12}
-//         onPress={() => navigation.navigate(ScreenNameEnum.AddComingJoin)}
-//         activeOpacity={0.85}
-//       >
-//         <Text style={styles.fabText}>📘 Add Upcoming </Text>
-//       </TouchableOpacity>   */}
-
-//       {/* Create Modal */}
-//       <CreateCommunityModal
-//         visible={showCreateModal}
-//         onClose={() => setShowCreateModal(false)}
-//         onSummit={handleSubmit}
-//       />
-//        <FilterModal
-//         visible={showFilterModal} // ✅ state variable से कंट्रोल
-//         onClose={() => setShowFilterModal(false)}
-//         categories={categoryList}
-//         selectedCategories={selectedCategories}
-//         onCategorySelect={handleCategorySelect}
-//         onClearFilters={handleClearFilters}
-//       />
-      
-//     </SafeAreaView>
-//   );
-// }
-
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -181,21 +9,25 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import useCommunities from './useCommunities';
+// Assuming these are the correct imports from your project structure
+import useCommunities from './useCommunities'; 
 import CustomHeader from '../../../compoent/CustomHeader';
 import SearchBar from '../../../compoent/SearchBar';
 import LoadingModal from '../../../utils/Loader';
 import EmptyListComponent from '../../../compoent/EmptyListComponent';
 import CreateCommunityModal from '../../../compoent/CreateCommunityModal';
 import FilterModal from './FilterModal';
-import imageIndex from '../../../assets/imageIndex'; // मान लें कि इसमें filterIcon है
+import imageIndex from '../../../assets/imageIndex'; 
+import { JoinCommunityModal } from '../../../compoent/JoinCommunityModal';
 
-const CommunityCard = ({ item, onJoinPress }: any) => {
-  // Join/View action के लिए Placeholder
+// --- External Component: CommunityCard ---
+// Moved outside the main component to prevent re-rendering on parent state changes
+const CommunityCard = React.memo(({ item, onSelect }: { item: any; onSelect: (item: any) => void }) => {
   const handlePress = () => {
-    onJoinPress(item);
+    onSelect(item);
   };
-   return (
+
+  return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={handlePress}>
       <Image 
         source={{ uri: item.logo || item.image || 'https://via.placeholder.com/100' }} 
@@ -209,13 +41,16 @@ const CommunityCard = ({ item, onJoinPress }: any) => {
         <Text style={styles.cardDescription} numberOfLines={2}>
           {item?.description || 'A growing community. Join now to participate!'}
         </Text>
-{item?.price !=0 && (
-        <Text style={{fontSize:12, color:'green', marginTop:4, fontWeight:'600'}}>
-          Price:₹{item.price}
-        </Text>
+        
+        {/* Price Tag */}
+        {item?.price > 0 && (
+          <Text style={styles.priceText}>
+            Price: ₹{item.price}
+          </Text>
         )}
              
-                {item?.category && (
+        {/* Category Chip */}
+        {item?.category && (
           <View style={styles.chip}>
             <Text style={styles.chipText}>{item.category}</Text>
           </View>
@@ -223,20 +58,18 @@ const CommunityCard = ({ item, onJoinPress }: any) => {
       </View>
       <TouchableOpacity
         style={styles.joinBtn}
-        onPress={handlePress}
+        onPress={handlePress} // Use the same press handler for the button
         activeOpacity={0.7}
       >
         <Text style={styles.joinBtnText}>Join</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );
-};
-
+});
 
 // --- Main Screen Component ---
 export default function CommunitiesScreen() {
   const {
-    navigation,
     isLoading,
     handleSubmit,
     categoryList,
@@ -252,29 +85,31 @@ export default function CommunitiesScreen() {
     handleClearFilters,
   } = useCommunities();
 
-  const handleCommunityPress = (community: any) => {
-    // Ideally, navigate to the Community Detail Screen
-    // navigation.navigate(ScreenNameEnum.COMMUNITY_DETAIL, { communityId: community.id });
-    console.log(`Navigating to details for: ${community.name}`);
-  };
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [selectedCommunity, setSelectedCommunity] = useState<any>(null);
 
-  const renderCommunityCard = ({ item }: any) => (
-    <CommunityCard item={item} onJoinPress={handleCommunityPress} />
+  // Unified handler for card/join button press
+  const handleCommunitySelect = (community: any) => {
+    setSelectedCommunity(community);
+    setShowJoinModal(true);
+  };
+  
+  const renderCommunityCard = ({ item }: { item: any }) => (
+    <CommunityCard item={item} onSelect={handleCommunitySelect} />
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{
-        marginTop:15
-      }}>
-  
-       <CustomHeader 
-        imageSource={imageIndex.backorange} 
-        label="Communities" 
-        rightIcon={imageIndex.filterIcon} // assuming filterIcon exists
-        onRightIconPress={() => setShowFilterModal(true)}
-      />
+      {/* Custom Header with Filter Icon */}
+      <View style={styles.headerContainer}>
+        <CustomHeader 
+          imageSource={imageIndex.backorange} 
+          label="Communities" 
+          rightIcon={imageIndex.filterIcon} 
+          onRightIconPress={() => setShowFilterModal(true)}
+        />
       </View>
+
       <View style={styles.contentWrapper}>
         {isLoading && <LoadingModal />}
         
@@ -282,7 +117,7 @@ export default function CommunitiesScreen() {
         <SearchBar
           value={search}
           onSearchChange={setSearch}
-          placeholder="Search ..."
+          placeholder="Search communities..."
           onfilter={() => setShowFilterModal(true)}
         />
 
@@ -290,7 +125,7 @@ export default function CommunitiesScreen() {
           showsVerticalScrollIndicator={false} 
           contentContainerStyle={styles.scrollViewContent}
         >
-          {/* Category Chips List */}
+          {/* Category Chips List (Optional, can be removed if FilterModal is primary) */}
           {/* <Text style={styles.sectionTitle}>Filter by Category</Text>
           <FlatList
             data={categoryList}
@@ -303,16 +138,14 @@ export default function CommunitiesScreen() {
               <TouchableOpacity
                 style={[
                   styles.colorfulChip,
-                  // selectedCategories.includes(item.name) && styles.selectedChip
+                  selectedCategories.includes(item.name) && styles.selectedChip
                 ]}
                 activeOpacity={0.85}
                 onPress={() => handleCategorySelect(item.name)}
               >
-                 <Image
+                <Image
                   source={{ uri: "https://cdn-icons-png.flaticon.com/256/6724/6724239.png" }}
-                  style={[
-                     styles.tagIcon,
-                   ]}
+                  style={styles.tagIcon}
                 />
                 <Text style={[
                   styles.colorfulChipText,
@@ -333,8 +166,8 @@ export default function CommunitiesScreen() {
             keyExtractor={(item, index) => (item.id || index).toString()}
             renderItem={renderCommunityCard}
             contentContainerStyle={styles.communitiesListContainer}
-            scrollEnabled={false} // ScrollView के अंदर है, इसलिए इसे disable करें
-            ListEmptyComponent={<EmptyListComponent message="No communities found matching your filter." />}
+            scrollEnabled={false} // Important: Disable FlatList scroll when inside ScrollView
+            ListEmptyComponent={<EmptyListComponent message="Data not Found" />}
           />
         </ScrollView>
       </View>
@@ -362,6 +195,12 @@ export default function CommunitiesScreen() {
         onCategorySelect={handleCategorySelect}
         onClearFilters={handleClearFilters}
       />
+      <JoinCommunityModal 
+        visible={showJoinModal} 
+        data={selectedCommunity} 
+        onClose={() => setShowJoinModal(false)} 
+      /> 
+      
     </SafeAreaView>
   );
 }
@@ -372,13 +211,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F7F7F7', // Light background
   },
+  headerContainer: {
+    marginTop: 15,
+  },
   contentWrapper: {
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop:10
+    paddingTop: 10,
   },
   scrollViewContent: {
-    paddingBottom: 20, // FAB के लिए जगह
+    paddingBottom: 80, // Increased padding for FAB visibility
   },
   sectionTitle: {
     fontSize: 16,
@@ -404,7 +246,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   selectedChip: {
-    backgroundColor: '#007AFF', // Primary Blue
+    backgroundColor: '#007AFF', 
     borderColor: '#007AFF',
   },
   colorfulChipText: {
@@ -419,7 +261,7 @@ const styles = StyleSheet.create({
   tagIcon: {
     width: 16,
     height: 16,
-   },
+  },
 
   // --- Community Card ---
   communitiesListContainer: {
@@ -436,7 +278,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    // elevation: 3,
+    elevation: 3, // Android shadow
     alignItems: 'center',
   },
   cardImage: {
@@ -459,6 +301,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
     marginTop: 2,
+  },
+  priceText: {
+    fontSize: 12, 
+    color: 'green', 
+    marginTop: 4, 
+    fontWeight: '600',
   },
   chip: {
     alignSelf: 'flex-start',
@@ -494,12 +342,13 @@ const styles = StyleSheet.create({
     height: 50,
     right: 20,
     bottom: 30,
-    backgroundColor: '#FF9800', // Orange button
+    backgroundColor: '#FF9800', 
     borderRadius: 25,
-     shadowColor: '#000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    elevation: 5, // Android shadow
   },
   fabText: {
     color: '#FFFFFF',

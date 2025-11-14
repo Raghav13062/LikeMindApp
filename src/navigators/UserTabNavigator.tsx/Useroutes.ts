@@ -1,10 +1,7 @@
 import imageIndex from "../../assets/imageIndex";
  import ScreenNameEnum from "../../routes/screenName.enum";
 import Chat from "../../screen/userHome/Chat/Chat";
-import ExpertMarkertPlace from "../../screen/userHome/ExpertMarkertPlace/ExpertMarkertPlace";
-import FindAParter from "../../screen/userHome/FindAParter/FindAParter";
-import Home from "../../screen/userHome/Home/Home";
-import Likedyou from "../../screen/userHome/Likedyou/Likedyou";
+ import Likedyou from "../../screen/userHome/Likedyou/Likedyou";
 import Profile from "../../screen/userHome/Profile/Profile";
 import Standout from "../../screen/userHome/Standout/Standout";
 import DaboardHome from "../NewHome1/DaboardHome";

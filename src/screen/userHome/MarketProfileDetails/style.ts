@@ -77,8 +77,7 @@ const styles = StyleSheet.create({
   priceIcon: {
     height: 22,
     width: 22,
-    tintColor: '#4A0080', // Tint icon with primary color
-  },
+   },
   priceLabel: {
     flex: 1,
     fontSize: 16,

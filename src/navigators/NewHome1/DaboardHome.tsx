@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image,ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from './style';
@@ -8,7 +8,7 @@ import useHome from './useHome';
 import LoadingModal from '../../utils/Loader';
 import ScreenNameEnum from '../../routes/screenName.enum';
 import { JoinCommunityModal } from '../../compoent/JoinCommunityModal';
-
+ 
 const NEXT_UP = { title: "Yoga & Mindfulness", date: "Wed, Oct 26 • 7:00 AM" };
 
 const SectionTitle = ({ title }: any) => (
@@ -19,9 +19,17 @@ const ExpertCard = ({ item }) => {
 
   return (
     <View style={[styles.expertCard, { backgroundColor: '#B3E5FC' }]}>
+      {/* <Image source={{uri:item.image}} style={{
+          width: '100%',     // full width
+    height: 180,       // fixed height (you can change)
+    borderRadius: 12,  // smooth rounded corners
+    resizeMode: 'cover', 
+    backgroundColor: '#f0f0f0', // fallback color while loading
+
+      }}/> */}
       <Text style={styles.expertTime}>8:00 AM</Text>
       <Text style={styles.expertTopic}>{item.title}</Text>
-      <Text style={styles.expertName}>{item.name}</Text>
+      <Text style={styles.expertName}>{item.location}</Text>
     </View>
   )
 }
@@ -35,30 +43,31 @@ const DaboardHome = () => {
 
   const { navigation,
     isLoading,
-    setIsLoading,
-    event, setevent,
-    communitiesList, setCommunitiesList,
-    standoutList } = useHome()
+     event,  
+     event1,
+    communitiesList, } = useHome()
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<any>(null);
 
-  const CommunityChip = ({ item }: any) => (
-    <TouchableOpacity
-      onPress={() => {
-        setSelected(item);
-        setOpen(true);
-      }}
-      style={styles.communityChip}
-    >
-      <MaterialIcons name={item.icon || 'local-cafe'} size={20} color="#6750A4" />
-      <Text style={styles.communityName}>{item.name}</Text>
-      {item.unread ? (
-        <View style={styles.unreadBadge}>
-          <Text style={styles.unreadText}>{item.unread}</Text>
-        </View>
-      ) : null}
-    </TouchableOpacity>
-  );
+const CommunityChip = ({ item, index }: any) => (
+  <TouchableOpacity
+    onPress={() => {
+      setSelected(item);
+      setOpen(true);
+    }}
+    style={styles.communityChip}
+  >
+    <MaterialIcons
+      name={item.icon || "group"}
+      size={20}
+      color="#6750A4"
+    />
+
+    <Text style={styles.communityName}>{item.name}</Text>
+
+  </TouchableOpacity>
+);
+;
   const EventListItem = ({ item, isLast }: any) => (
     <TouchableOpacity
       onPress={() => {
@@ -101,7 +110,7 @@ const DaboardHome = () => {
         {/* 3. Your Expert Schedule (Horizontal Scroll) */}
         <SectionTitle title="Your Expert Schedule" />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-          {event.map((item, index) => (
+          {event1.map((item, index) => (
             <ExpertCard key={index} item={item} />
           ))}
         </ScrollView>
@@ -116,7 +125,7 @@ const DaboardHome = () => {
 
         {/* 5. Your Events (Vertical List) */}
         <SectionTitle title="Your Events" />
-        <View style={styles.verticalList}>
+        <View >
           {event.map((item, index) => (
             <EventListItem key={index} item={item} />
           ))}

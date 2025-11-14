@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {   useEffect, useState } from 'react';
+import {   useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux'; // ✅ import dispatch
  
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginSuccess } from '../../redux/feature/authSlice';
+ import { loginSuccess } from '../../redux/feature/authSlice';
 import { getgroups } from '../../Api/apiPaidExperti';
 import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../Api/apiRequest';
 
@@ -11,17 +10,18 @@ const useHome = () => {
   const navigation: any = useNavigation();
   const dispatch = useDispatch(); // ✅ initialize dispatch
   const [isLoading, setIsLoading] = useState(false);
-  const [event, setevent] = useState([]);
+  const [event1, setevent1] = useState([]);
+    const [event, setevent] = useState([]);
+
   const [standoutList, setStandoutList] = useState([]);
   const [communitiesList, setCommunitiesList] = useState([]);
-
-  useEffect(() => {
-    GetFunction();
-    fetchEventS()
-    social()
-    getgroupsFunction()
-    fetchCommunities()
-  }, []);
+ useEffect(()=>{
+      GetFunction();
+    fetchEventS();
+    social();
+    getgroupsFunction();
+    fetchCommunities();
+ },[])
 
   const GetFunction = async () => {
     try {
@@ -60,11 +60,10 @@ const useHome = () => {
       setIsLoading(true);
       const response = await getgroups(setIsLoading);
       if (response?.data) {
-         setevent(response.data)
+          setevent1(response.data)
       }  
     } catch (error) {
-      console.error("Community fetch error:", error);
-    } finally {
+     } finally {
       setIsLoading(false);
     }
   };
@@ -101,7 +100,8 @@ const useHome = () => {
     setIsLoading,
      event, setevent ,
      standoutList,
-     communitiesList, setCommunitiesList
+     communitiesList, setCommunitiesList,
+     event1
   };
 };
 

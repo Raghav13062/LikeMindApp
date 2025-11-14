@@ -291,8 +291,7 @@ const renderGroupItem = ({ item }) => (
                 nav.navigate(ScreenNameEnum.MarketProfileDetails,{
                   item:item?.item
                 })
-                //  nav.navigate(ScreenNameEnum.JoinSessions)
-                  }}
+                   }}
                 >
                     <Text style={styles.joinText}>Join Now</Text>
                   </TouchableOpacity>

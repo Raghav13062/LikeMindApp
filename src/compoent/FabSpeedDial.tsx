@@ -14,14 +14,23 @@ const FabSpeedDial = () => {
         <View style={styles.fabMenu}>
           <TouchableOpacity
             style={styles.fabMenuItem}
-            onPress={() => navigation.navigate(ScreenNameEnum.CommunitiesScreen)}>
+             onPress={() => {
+    navigation.navigate(ScreenNameEnum.CommunitiesScreen);
+    setFabOpen(false);   // close FAB properly
+  }}
+            >
             <MaterialIcons name="group-add" size={24} color="#6750A4" />
             <Text style={styles.fabMenuText}>Create Community</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.fabMenuItem}
-            onPress={() => navigation.navigate(ScreenNameEnum.EventListScreen)}>
+onPress={() => {
+    navigation.navigate(ScreenNameEnum.EventListScreen);
+    setFabOpen(false);   // close FAB properly
+  }}            
+            
+            >
             <MaterialIcons name="event" size={24} color="#6750A4" />
             <Text style={styles.fabMenuText}>Host Event</Text>
           </TouchableOpacity>
@@ -61,13 +70,15 @@ const styles = StyleSheet.create({
   },
   fabMenu: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 10,
     marginBottom: 10,
      shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+     borderWidth:1,
+    borderColor:'#ccc'
   },
   fabMenuItem: {
     flexDirection: 'row',
