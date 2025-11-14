@@ -15,14 +15,12 @@ import Splash from "../screen/auth/Splash";
 import UserTypeSelection from "../screen/auth/UserTypeSelection";
 import ChooseRole from "../screen/chooseRole/ChooseRole";
 import OfferExperties from "../screen/OfferExperties";
-import EditEventForm from "../screen/PaidExpert/EditEventForm/EditEventForm";
-import EventForm from "../screen/PaidExpert/EventForm/EventForm";
- import ChangePasswordScreen from "../screen/privay/ChangePassword";
+  import ChangePasswordScreen from "../screen/privay/ChangePassword";
 import HelpSupportScreen from "../screen/privay/HelpSupport";
 import LegalPoliciesScreen from "../screen/privay/LegalPoliciesScreen";
 import NotificationsSetting from "../screen/privay/NotificationsSetting";
-import Creategroup from "../screen/SharedInterest/Creategroup/Creategroup";
-import SharedChatDetails from "../screen/SharedInterest/SharedChat/SharedChatDetails/SharedChatDetails";
+// import Creategroup from "../screen/SharedInterest/Creategroup/Creategroup";
+// import SharedChatDetails from "../screen/SharedInterest/SharedChat/SharedChatDetails/SharedChatDetails";
  import ChatDetails from "../screen/userHome/Chat/ChatDetails/ChatDetails";
 import CommunitiesScreen from "../screen/userHome/CommunitiesScreen/CommunitiesScreen";
 import EditProfile from "../screen/userHome/EditProfile/EditProfile";
@@ -66,14 +64,14 @@ const _routes:any = {
       name: ScreenNameEnum.OnboardingScreen,
       Component: OnboardingScreen,
     },
-    {
-      name: ScreenNameEnum.EventForm,
-      Component: EventForm,
-    },
-    {
-      name: ScreenNameEnum.EditEventForm,
-      Component: EditEventForm,
-    },
+    // {
+    //   name: ScreenNameEnum.EventForm,
+    //   Component: EventForm,
+    // },
+    // {
+    //   name: ScreenNameEnum.EditEventForm,
+    //   Component: EditEventForm,
+    // },
     // {
     //   name: ScreenNameEnum.ChooseRoleScreen,
     //   Component: ChooseRoleScreen,
@@ -104,10 +102,7 @@ const _routes:any = {
       name: ScreenNameEnum.UserTypeSelection,
       Component:UserTypeSelection,
     },
-    {
-      name: ScreenNameEnum.SharedChatDetails,
-      Component:SharedChatDetails,
-    },
+   
     {
       name: ScreenNameEnum.ProfileSetup,
       Component:ProfileSetup,
@@ -202,10 +197,10 @@ const _routes:any = {
       name: ScreenNameEnum.ProfilePhots,
       Component:ProfilePhots,
     },
-    {
-      name: ScreenNameEnum.Creategroup,
-      Component:Creategroup,
-    },
+    // {
+    //   name: ScreenNameEnum.Creategroup,
+    //   Component:Creategroup,
+    // },
         {
       name: ScreenNameEnum.NotificationScreen,
       Component:NotificationsSetting,

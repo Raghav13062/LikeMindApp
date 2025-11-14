@@ -622,8 +622,11 @@ const Get_post_Api = async (
   if(param?.description){
     formData.append("description", param?.description);
   }
-  if(param?.name){
-    formData.append("name", param?.description);
+  if(param?.price){
+    formData.append("price", param?.price);
+  }
+    if(param?.name){
+    formData.append("name", param?.name);
   }
   if(param?.category){
     formData.append("categor_id", param?.category);

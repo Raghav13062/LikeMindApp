@@ -195,8 +195,7 @@ const CommunityCard = ({ item, onJoinPress }: any) => {
   const handlePress = () => {
     onJoinPress(item);
   };
-
-  return (
+   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={handlePress}>
       <Image 
         source={{ uri: item.logo || item.image || 'https://via.placeholder.com/100' }} 
@@ -210,6 +209,12 @@ const CommunityCard = ({ item, onJoinPress }: any) => {
         <Text style={styles.cardDescription} numberOfLines={2}>
           {item?.description || 'A growing community. Join now to participate!'}
         </Text>
+{item?.price !=0 && (
+        <Text style={{fontSize:12, color:'green', marginTop:4, fontWeight:'600'}}>
+          Price:₹{item.price}
+        </Text>
+        )}
+             
                 {item?.category && (
           <View style={styles.chip}>
             <Text style={styles.chipText}>{item.category}</Text>
@@ -277,7 +282,7 @@ export default function CommunitiesScreen() {
         <SearchBar
           value={search}
           onSearchChange={setSearch}
-          placeholder="Search by name or description..."
+          placeholder="Search ..."
           onfilter={() => setShowFilterModal(true)}
         />
 

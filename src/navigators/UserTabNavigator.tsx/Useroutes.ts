@@ -1,6 +1,5 @@
 import imageIndex from "../../assets/imageIndex";
-import NewHome from "../../NewHome/NewHome";
-import ScreenNameEnum from "../../routes/screenName.enum";
+ import ScreenNameEnum from "../../routes/screenName.enum";
 import Chat from "../../screen/userHome/Chat/Chat";
 import ExpertMarkertPlace from "../../screen/userHome/ExpertMarkertPlace/ExpertMarkertPlace";
 import FindAParter from "../../screen/userHome/FindAParter/FindAParter";

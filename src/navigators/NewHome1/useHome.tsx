@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'; // ✅ import dispatch
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginSuccess } from '../../redux/feature/authSlice';
 import { getgroups } from '../../Api/apiPaidExperti';
-import { Get_post_Api, socialusersApi, Usergetevents } from '../../Api/apiRequest';
+import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../Api/apiRequest';
 
 const useHome = () => {
   const navigation: any = useNavigation();
@@ -13,12 +13,14 @@ const useHome = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [event, setevent] = useState([]);
   const [standoutList, setStandoutList] = useState([]);
+  const [communitiesList, setCommunitiesList] = useState([]);
 
   useEffect(() => {
     GetFunction();
     fetchEventS()
     social()
     getgroupsFunction()
+    fetchCommunities()
   }, []);
 
   const GetFunction = async () => {
@@ -80,12 +82,26 @@ const useHome = () => {
       setIsLoading(false);
     }
   };
+  
+    const fetchCommunities = async () => {
+      try {
+        setIsLoading(true);
+        const response = await UserGetCommunitiesApi(setIsLoading);
+        const data = response?.data || [];
+        setCommunitiesList(data);
+       } catch (error) {
+        console.error('Community fetch error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
   return {
     navigation,
     isLoading,
     setIsLoading,
      event, setevent ,
-     standoutList
+     standoutList,
+     communitiesList, setCommunitiesList
   };
 };
 

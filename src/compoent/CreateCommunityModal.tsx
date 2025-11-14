@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { UserGetCateoryApi } from '../Api/apiRequest';
+import LocationSearchModal from './LocationSearchModal';
 
 export default function CreateCommunityModal({ visible, onSummit, onClose }: any) {
   const [form, setForm] = useState({
@@ -21,6 +22,7 @@ export default function CreateCommunityModal({ visible, onSummit, onClose }: any
     tags: '',
     privacy: 'Public',
     logo: null,
+    price: '',
   });
 
   const [errors, setErrors] = useState<any>({});
@@ -52,7 +54,7 @@ export default function CreateCommunityModal({ visible, onSummit, onClose }: any
       const image = await ImagePicker.openPicker({
         width: 300,
         height: 300,
-        cropping: true,
+        cropping: false,
         compressImageQuality: 0.8,
       });
       if (image?.path) {
@@ -71,18 +73,18 @@ export default function CreateCommunityModal({ visible, onSummit, onClose }: any
       newErrors.name = 'Title is required';
       valid = false;
     }
-    if (!form.description.trim() || form.description.length < 1) {
-      newErrors.description = 'Description must be at least 10 characters';
-      valid = false;
-    }
+    // if (!form.description.trim() || form.description.length < 1) {
+    //   newErrors.description = 'Description must be at least  characters';
+    //   valid = false;
+    // }
     if (!form.category) {
       newErrors.category = 'Please select a category';
       valid = false;
     }
-    if (!form.tags.trim()) {
-      newErrors.tags = 'Please enter at least one tag';
-      valid = false;
-    }
+    // if (!form.tags.trim()) {
+    //   newErrors.tags = 'Please enter at least one tag';
+    //   valid = false;
+    // }
     if (!form.logo) {
       newErrors.logo = 'Please upload a community logo';
       valid = false;
@@ -121,8 +123,18 @@ export default function CreateCommunityModal({ visible, onSummit, onClose }: any
           value={form.name}
           onChangeText={(text) => setForm({ ...form, name: text })}
         />
-        {errors.name && <Text style={styles.error}>{errors.name}</Text>}
 
+        <TextInput
+          style={styles.input}
+                  returnKeyType="done"
+
+          placeholder="Price"
+        keyboardType="decimal-pad"   // "numeric" if you want integers only
+          placeholderTextColor={"black"}
+          value={form.price}
+          onChangeText={(text) => setForm({ ...form, price: text })}
+        />
+ 
         <Text style={styles.label}>Summary / Description</Text>
         <TextInput
           style={[styles.input, { height: 80 }]}
@@ -220,6 +232,7 @@ export default function CreateCommunityModal({ visible, onSummit, onClose }: any
             Create
           </Text>
         </TouchableOpacity>
+       
       </ScrollView>
     </Modal>
   );
@@ -247,6 +260,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     padding: 10,
+    height:55,
+    justifyContent:'center',
   },
   label: {
     fontWeight: '600',
@@ -258,6 +273,7 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
     fontSize: 12,
+    marginTop:15
   },
   privacyOption: {
     padding: 10,

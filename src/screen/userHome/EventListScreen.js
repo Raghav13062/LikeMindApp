@@ -20,6 +20,7 @@ import * as ImagePicker from "react-native-image-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons for a fresh look
 import ScreenNameEnum from "../../routes/screenName.enum";
 import { useNavigation } from "@react-navigation/native";
+import LocationSearchModal from "../../compoent/LocationSearchModal";
 
 // --- 🎨 Premium Color Palette ---
 const COLORS = {
@@ -33,31 +34,31 @@ const COLORS = {
   success: '#4CAF50',
 };
 
- const StyledTextInput = ({ label, placeholder, value, onChangeText, multiline, keyboardType, style, ...props }) => {
-    const [isFocused, setIsFocused] = useState(false);
-    return (
-        <View style={{ marginBottom: 15 }}>
-            <Text style={styles.inputLabel}>{label}</Text>
-            <TextInput
-                placeholder={placeholder}
-                placeholderTextColor={COLORS.placeholder}
-                value={value}
-                onChangeText={onChangeText}
-                keyboardType={keyboardType}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                style={[
-                    styles.input,
-                    multiline && styles.textArea,
-                    isFocused && styles.inputFocused, // Focus style
-                    style,
-                ]}
-                multiline={multiline}
-                textAlignVertical={multiline ? "top" : "center"}
-                {...props}
-            />
-        </View>
-    );
+const StyledTextInput = ({ label, placeholder, value, onChangeText, multiline, keyboardType, style, ...props }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  return (
+    <View style={{ marginBottom: 15 }}>
+      <Text style={styles.inputLabel}>{label}</Text>
+      <TextInput
+        placeholder={placeholder}
+        placeholderTextColor={COLORS.placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        keyboardType={keyboardType}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        style={[
+          styles.input,
+          multiline && styles.textArea,
+          isFocused && styles.inputFocused, // Focus style
+          style,
+        ]}
+        multiline={multiline}
+        textAlignVertical={multiline ? "top" : "center"}
+        {...props}
+      />
+    </View>
+  );
 };
 
 const EventListScreen = () => {
@@ -71,9 +72,10 @@ const EventListScreen = () => {
   const [categoryId, setCategoryId] = useState("1");
   const [image, setImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false); // New state for submit loading
-
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   // ... (fetchEvents, useEffect, pickImage functions remain the same)
-    // Fetch events
+  // Fetch events
   const fetchEvents = async () => {
     try {
       setLoading(true);
@@ -118,7 +120,7 @@ const EventListScreen = () => {
       alert("Please fill all fields and select an image.");
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       const token = await AsyncStorage.getItem("token");
@@ -136,6 +138,13 @@ const EventListScreen = () => {
       formdata.append("about", about);
       formdata.append("price", price);
       formdata.append("category_id", categoryId);
+      if(selectedLocation.latitude){
+  formdata.append("lat", selectedLocation.latitude);
+      }
+      if(selectedLocation.longitude){
+  formdata.append("long", selectedLocation.longitude);
+      }
+      
       if (image) {
         formdata.append("image", {
           uri: image.uri,
@@ -152,7 +161,7 @@ const EventListScreen = () => {
       const result = await response.json();
       console.log(result);
       if (result.success) {
-        fetchEvents(); 
+        fetchEvents();
         setModalVisible(false);
         setTitle("");
         setName("");
@@ -160,51 +169,51 @@ const EventListScreen = () => {
         setPrice("");
         setImage(null);
       } else {
-         alert(result.message || "Failed to create event.");
+        alert(result.message || "Failed to create event.");
       }
     } catch (error) {
       console.error("Event creation error:", error);
       alert("An error occurred during event creation.");
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
-  
+
   const closeModal = () => {
     setModalVisible(false);
   };
- const navigation= useNavigation()
-   const renderItem = ({ item }) => (
+  const navigation = useNavigation()
+  const renderItem = ({ item }) => (
     <View style={styles.card}>
-        <Image 
-            source={{ uri: item.image }} 
-            style={styles.cardImage} 
-            resizeMode="cover"
-        />
-        <View style={styles.cardContent}>
-            <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-            
-            <View style={styles.infoRow}>
-                <Ionicons name="person-circle-outline" size={16} color={COLORS.textSecondary} />
-                <Text style={styles.cardName}>{item.name}</Text>
-            </View>
+      <Image
+        source={{ uri: item.image }}
+        style={styles.cardImage}
+        resizeMode="cover"
+      />
+      <View style={styles.cardContent}>
+        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
 
-            <Text style={styles.cardAbout} >{item.about}</Text>
-            
-            <View style={styles.cardFooter}>
-                <Text style={styles.cardPrice}>
-{item.price === null || item.price === '0' || item.price == 0 
-  ? 'FREE' 
-  : `₹${item.price}`}
-                </Text>
-                <TouchableOpacity style={styles.detailsButton}
-                onPress={()=>navigation.navigate(ScreenNameEnum.MarketProfileDetails,{item})}
-                >
-                    <Text style={styles.detailsButtonText}>Join Event</Text>
-                    <Ionicons name="arrow-forward" size={14} color={COLORS.card} style={{ marginLeft: 5 }} />
-                </TouchableOpacity>
-            </View>
+        <View style={styles.infoRow}>
+          <Ionicons name="person-circle-outline" size={16} color={COLORS.textSecondary} />
+          <Text style={styles.cardName}>{item.name}</Text>
         </View>
+
+        <Text style={styles.cardAbout} >{item.about}</Text>
+
+        <View style={styles.cardFooter}>
+          <Text style={styles.cardPrice}>
+            {item.price === null || item.price === '0' || item.price == 0
+              ? 'FREE'
+              : `₹${item.price}`}
+          </Text>
+          <TouchableOpacity style={styles.detailsButton}
+            onPress={() => navigation.navigate(ScreenNameEnum.MarketProfileDetails, { item })}
+          >
+            <Text style={styles.detailsButtonText}>Join Event</Text>
+            <Ionicons name="arrow-forward" size={14} color={COLORS.card} style={{ marginLeft: 5 }} />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 
@@ -221,22 +230,22 @@ const EventListScreen = () => {
         <Text style={styles.createButtonText}>Host Event</Text>
       </TouchableOpacity>
 
-       {loading ? (
+      {loading ? (
         <ActivityIndicator size="large" color={COLORS.primary} style={styles.loadingIndicator} />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}
           data={events}
           style={{
-            marginTop:15
+            marginTop: 15
           }}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-                <Ionicons name="calendar-outline" size={60} color={COLORS.placeholder} />
-                <Text style={styles.emptyText}>No events scheduled yet. Start hosting today!</Text>
+              <Ionicons name="calendar-outline" size={60} color={COLORS.placeholder} />
+              <Text style={styles.emptyText}>No events scheduled yet. Start hosting today!</Text>
             </View>
           }
         />
@@ -249,63 +258,93 @@ const EventListScreen = () => {
         visible={modalVisible}
         onRequestClose={closeModal}
       >
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.modalOverlay}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.modalOverlay}
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Host New Event</Text>
-                <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-                    <Ionicons name="close" size={24} color={COLORS.textSecondary} />
-                </TouchableOpacity>
+              <Text style={styles.modalTitle}>Host New Event</Text>
+              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                <Ionicons name="close" size={24} color={COLORS.textSecondary} />
+              </TouchableOpacity>
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
-              
-              <StyledTextInput 
-                  label="Event Title" 
-                  placeholder="E.g., Masterclass on React Native"
-                  value={title} 
-                  onChangeText={setTitle} 
+
+              <StyledTextInput
+                label="Event Title"
+                placeholder="E.g., Masterclass on React Native"
+                value={title}
+                onChangeText={setTitle}
               />
-              <StyledTextInput 
-                  label="Coach/Host Name" 
-                  placeholder="Your Name or Organization"
-                  value={name} 
-                  onChangeText={setName} 
+                <TouchableOpacity style={{
+                 borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 10,
+    padding: Platform.OS === 'ios' ? 16 : 12,
+    fontSize: 16,
+    color: COLORS.textPrimary,
+    backgroundColor: COLORS.background, // Light background for input field
+              }} onPress={() => setModalVisible1(true)}>
+                <Text style={styles.btnText}>Search Location</Text>
+              </TouchableOpacity>
+
+
+              {selectedLocation && (
+                <View style={styles.box}>
+                   <Text>Address: {selectedLocation.address}</Text>
+                  {/* <Text>Lat: {selectedLocation.latitude}</Text>
+<Text>Lng: {selectedLocation.longitude}</Text> */}
+                </View>
+              )}
+              <StyledTextInput
+                label="Coach/Host Name"
+                placeholder="Your Name or Organization"
+                value={name}
+                onChangeText={setName}
               />
-              <StyledTextInput 
-                  label="About Event" 
-                  placeholder="Describe what the event is about (min 50 chars)"
-                  value={about} 
-                  onChangeText={setAbout} 
-                  multiline 
+              <StyledTextInput
+                label="About Event"
+                placeholder="Describe what the event is about (min 50 chars)"
+                value={about}
+                onChangeText={setAbout}
+                multiline
               />
-              <StyledTextInput 
-                  label="Price (USD)" 
-                  placeholder="0 for Free"
-                  value={price} 
-                  onChangeText={setPrice} 
-                  keyboardType="numeric" 
+              <StyledTextInput
+                label="Price ₹"
+                placeholder="0 for Free"
+                value={price}
+                onChangeText={setPrice}
+                keyboardType="numeric"
+              />
+
+            
+              <LocationSearchModal
+                visible={modalVisible1}
+                onClose={() => setModalVisible1(false)}
+                onSelectLocation={(loc) => {
+                  setSelectedLocation(loc);
+                  setModalVisible1(false);
+                }}
               />
 
               <View style={{ marginBottom: 15 }}>
-                  <Text style={styles.inputLabel}>Event Image</Text>
-                  <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-                    <Ionicons name="cloud-upload-outline" size={20} color={COLORS.textPrimary} style={{ marginRight: 10 }} />
-                    <Text style={styles.imagePickerText}>
-                        {image ? "Image Selected: " + (image.fileName || "photo.jpg").substring(0, 20) : "Tap to Pick Image from Gallery"}
-                    </Text>
-                  </TouchableOpacity>
+                <Text style={styles.inputLabel}>Event Image</Text>
+                <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+                  <Ionicons name="cloud-upload-outline" size={20} color={COLORS.textPrimary} style={{ marginRight: 10 }} />
+                  <Text style={styles.imagePickerText}>
+                    {image ? "Image Selected: " + (image.fileName || "photo.jpg").substring(0, 20) : "Tap to Pick Image from Gallery"}
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               {image && (
                 <View style={styles.imagePreviewContainer}>
-                    <Image
-                      source={{ uri: image.uri }}
-                      style={styles.imagePreview}
-                      resizeMode="cover"
-                    />
+                  <Image
+                    source={{ uri: image.uri }}
+                    style={styles.imagePreview}
+                    resizeMode="cover"
+                  />
                 </View>
               )}
 
@@ -315,17 +354,17 @@ const EventListScreen = () => {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                    <ActivityIndicator color={COLORS.card} />
+                  <ActivityIndicator color={COLORS.card} />
                 ) : (
-                    <Text style={styles.submitButtonText}>Host Event Now</Text>
+                  <Text style={styles.submitButtonText}>Host Event Now</Text>
                 )}
               </TouchableOpacity>
 
               <TouchableOpacity
-                  style={styles.cancelLink}
-                  onPress={closeModal}
+                style={styles.cancelLink}
+                onPress={closeModal}
               >
-                  <Text style={styles.cancelLinkText}>Cancel</Text>
+                <Text style={styles.cancelLinkText}>Cancel</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -338,12 +377,12 @@ const EventListScreen = () => {
 export default EventListScreen;
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: COLORS.background 
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background
   },
-  listContainer: { 
-    paddingHorizontal: 16, 
+  listContainer: {
+    paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 100, // Increased padding to avoid FAB overlap
   },
@@ -354,27 +393,27 @@ const styles = StyleSheet.create({
     marginBottom: 15, // Reduced margin
     shadowColor: COLORS.textPrimary,
     shadowOffset: { width: 0, height: 4 }, // Smaller shadow
-    shadowOpacity: 0.05, 
+    shadowOpacity: 0.05,
     shadowRadius: 10,
-     overflow: "hidden",
+    overflow: "hidden",
     flexDirection: 'row', // Horizontal layout
     height: 120, // Fixed compact height
   },
-  cardImage: { 
+  cardImage: {
     width: 100, // Fixed width for image
-    height: "100%", 
+    height: "100%",
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
   },
-  cardContent: { 
+  cardContent: {
     flex: 1, // Takes up remaining space
     padding: 12, // Reduced padding
     justifyContent: 'space-between',
   },
-  cardTitle: { 
+  cardTitle: {
     fontSize: 18, // Reduced font size
-    fontWeight: "800", 
-    color: COLORS.textPrimary, 
+    fontWeight: "800",
+    color: COLORS.textPrimary,
     marginBottom: 3,
   },
   infoRow: {
@@ -382,16 +421,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
   },
-  cardName: { 
+  cardName: {
     fontSize: 12, // Reduced font size
-    color: COLORS.textSecondary, 
+    color: COLORS.textSecondary,
     marginLeft: 4,
     fontWeight: '500',
     flexShrink: 1,
   },
-  cardAbout: { 
+  cardAbout: {
     fontSize: 12, // Reduced font size
-    color: COLORS.textSecondary, 
+    color: COLORS.textSecondary,
     marginBottom: 5,
   },
   cardFooter: {
@@ -401,10 +440,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
     // Removed border for cleaner look
   },
-  cardPrice: { 
+  cardPrice: {
     fontSize: 16, // Reduced font size
-    fontWeight: "800", 
-    color: COLORS.secondary, 
+    fontWeight: "800",
+    color: COLORS.secondary,
   },
   detailsButton: {
     flexDirection: 'row',
@@ -413,7 +452,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8, // Reduced padding
     backgroundColor: COLORS.primary,
     borderRadius: 8,
-    bottom:5
+    bottom: 5
   },
   detailsButtonText: {
     color: "white",
@@ -421,11 +460,11 @@ const styles = StyleSheet.create({
     fontSize: 13, // Reduced font size
   },
   // --- Create Button (FAB Style) ---
-  createButton: { 
+  createButton: {
     flexDirection: 'row',
     backgroundColor: COLORS.secondary,
     paddingHorizontal: 20,
-    paddingVertical: 12, 
+    paddingVertical: 12,
     borderRadius: 30, // Pill shape
     alignItems: "center",
     justifyContent: 'center',
@@ -437,23 +476,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 15,
-   },
-  createButtonText: { 
-    color: COLORS.card, 
-    fontWeight: "700", 
+  },
+  createButtonText: {
+    color: COLORS.card,
+    fontWeight: "700",
     fontSize: 16,
     marginLeft: 8,
   },
   // --- Modal Styles (Improved Form) ---
-  modalOverlay: { 
-    flex: 1, 
-    backgroundColor: "rgba(0,0,0,0.6)", 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "flex-end", // Opens from bottom
   },
-  modalContent: { 
-    width: "100%", 
-    backgroundColor: COLORS.card, 
-    borderTopLeftRadius: 25, 
+  modalContent: {
+    width: "100%",
+    backgroundColor: COLORS.card,
+    borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     padding: 25,
     maxHeight: '85%',
@@ -464,13 +503,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  modalTitle: { 
-    fontSize: 26, 
-    fontWeight: "800", 
-    color: COLORS.textPrimary 
+  modalTitle: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: COLORS.textPrimary
   },
   closeButton: {
     padding: 5,
+  },
+  btn: {
+    backgroundColor: COLORS.secondary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  btnText: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  box: {
+    marginTop: 20,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    width: '100%',
+    marginBottom:15
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
   },
   // --- Input Styles (Modular and Focus-aware) ---
   inputLabel: {
@@ -479,11 +543,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
   },
-  input: { 
-    borderWidth: 1, 
-    borderColor: '#E0E0E0', 
-    borderRadius: 10, 
-    padding: Platform.OS === 'ios' ? 16 : 12, 
+  input: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 10,
+    padding: Platform.OS === 'ios' ? 16 : 12,
     fontSize: 16,
     color: COLORS.textPrimary,
     backgroundColor: COLORS.background, // Light background for input field
@@ -495,21 +559,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  textArea: { 
-    height: 120, 
+  textArea: {
+    height: 120,
     paddingTop: 12,
   },
-  imagePicker: { 
+  imagePicker: {
     flexDirection: 'row',
-    alignItems: "center", 
+    alignItems: "center",
     backgroundColor: COLORS.primary + '20', // Very light primary background
-    borderWidth: 1, 
-    borderColor: COLORS.primary, 
-    borderRadius: 10, 
-    padding: 14, 
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: 10,
+    padding: 14,
   },
-  imagePickerText: { 
-    color: COLORS.textPrimary, 
+  imagePickerText: {
+    color: COLORS.textPrimary,
     fontWeight: "600",
     fontSize: 15,
   },
@@ -522,27 +586,27 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-   },
-  imagePreview: { 
-    width: "100%", 
-    height: 150, 
   },
-  submitButton: { 
-    backgroundColor: COLORS.secondary, 
-    padding: 16, 
-    borderRadius: 10, 
+  imagePreview: {
+    width: "100%",
+    height: 150,
+  },
+  submitButton: {
+    backgroundColor: COLORS.secondary,
+    padding: 16,
+    borderRadius: 10,
     alignItems: "center",
     marginTop: 15,
     shadowColor: COLORS.secondary,
     shadowOpacity: 0.5,
     shadowRadius: 10,
-     flexDirection: 'row',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
-  submitButtonText: { 
-    color: COLORS.card, 
-    fontWeight: "800", 
-    fontSize: 18 
+  submitButtonText: {
+    color: COLORS.card,
+    fontWeight: "800",
+    fontSize: 18
   },
   cancelLink: {
     padding: 10,
@@ -567,10 +631,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.placeholder + '50',
   },
-  emptyText: { 
-    textAlign: "center", 
-    marginTop: 15, 
-    color: COLORS.textSecondary, 
+  emptyText: {
+    textAlign: "center",
+    marginTop: 15,
+    color: COLORS.textSecondary,
     fontSize: 16,
     lineHeight: 24,
   },

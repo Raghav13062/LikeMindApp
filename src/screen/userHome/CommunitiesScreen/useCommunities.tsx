@@ -97,6 +97,7 @@ const useCommunities = () => {
         tags: formData.tags,
         privacy: formData.privacy,
         logo: formData.logo,
+        price: formData.price,
       };
       const response = await userAddCommunity(params, setIsLoading);
       if (response) {
