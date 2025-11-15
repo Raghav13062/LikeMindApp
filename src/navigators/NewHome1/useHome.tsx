@@ -1,6 +1,6 @@
 import {   useEffect, useState } from 'react';
 import {   useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux'; // ✅ import dispatch
+import { useDispatch, useSelector } from 'react-redux'; // ✅ import dispatch
  
  import { loginSuccess } from '../../redux/feature/authSlice';
 import { getgroups } from '../../Api/apiPaidExperti';
@@ -12,6 +12,7 @@ const useHome = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [event1, setevent1] = useState([]);
     const [event, setevent] = useState([]);
+  const isLogin:any = useSelector <any>((state) => state?.auth?.userData);
 
   const [standoutList, setStandoutList] = useState([]);
   const [communitiesList, setCommunitiesList] = useState([]);
@@ -60,7 +61,7 @@ const useHome = () => {
       setIsLoading(true);
       const response = await getgroups(setIsLoading);
       if (response?.data) {
-          setevent1(response.data)
+           setevent1(response.data)
       }  
     } catch (error) {
      } finally {
@@ -87,6 +88,7 @@ const useHome = () => {
         setIsLoading(true);
         const response = await UserGetCommunitiesApi(setIsLoading);
         const data = response?.data || [];
+        console.log("Communities data:", response?.data);
         setCommunitiesList(data);
        } catch (error) {
         console.error('Community fetch error:', error);
@@ -101,7 +103,8 @@ const useHome = () => {
      event, setevent ,
      standoutList,
      communitiesList, setCommunitiesList,
-     event1
+     event1,
+     isLogin
   };
 };
 

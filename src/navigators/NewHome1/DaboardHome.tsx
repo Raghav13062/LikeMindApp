@@ -8,6 +8,7 @@ import useHome from './useHome';
 import LoadingModal from '../../utils/Loader';
 import ScreenNameEnum from '../../routes/screenName.enum';
 import { JoinCommunityModal } from '../../compoent/JoinCommunityModal';
+import YourScheduleEventModal from '../../compoent/YourScheduleEventModal';
  
 const NEXT_UP = { title: "Yoga & Mindfulness", date: "Wed, Oct 26 • 7:00 AM" };
 
@@ -15,24 +16,7 @@ const SectionTitle = ({ title }: any) => (
   <Text style={styles.sectionTitle}>{title}</Text>
 );
 
-const ExpertCard = ({ item }) => {
 
-  return (
-    <View style={[styles.expertCard, { backgroundColor: '#B3E5FC' }]}>
-      {/* <Image source={{uri:item.image}} style={{
-          width: '100%',     // full width
-    height: 180,       // fixed height (you can change)
-    borderRadius: 12,  // smooth rounded corners
-    resizeMode: 'cover', 
-    backgroundColor: '#f0f0f0', // fallback color while loading
-
-      }}/> */}
-      <Text style={styles.expertTime}>8:00 AM</Text>
-      <Text style={styles.expertTopic}>{item.title}</Text>
-      <Text style={styles.expertName}>{item.location}</Text>
-    </View>
-  )
-}
 
 
 
@@ -45,9 +29,35 @@ const DaboardHome = () => {
     isLoading,
      event,  
      event1,
+     isLogin,
     communitiesList, } = useHome()
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+ 
+ const ExpertCard = ({ item }:any) => {
+
+  return (
+    <TouchableOpacity
+      style={[styles.expertCard, { backgroundColor: "#B3E5FC" }]}
+      onPress={() => {
+        navigation.navigate(ScreenNameEnum.MarketProfileDetails, {
+          item: item,
+        });
+      }}
+    >
+      {/* IMAGE (uncomment if needed) */}
+      {/* <Image
+        source={{ uri: item.image }}
+        style={styles.cardImage}
+      /> */}
+
+      <Text style={styles.expertTime}>8:00 AM</Text>
+      <Text style={styles.expertTopic}>{item.title}</Text>
+      <Text style={styles.expertName}>{item.location}</Text>
+    </TouchableOpacity>
+  );
+};
+
 
 const CommunityChip = ({ item, index }: any) => (
   <TouchableOpacity
@@ -84,6 +94,7 @@ const CommunityChip = ({ item, index }: any) => (
       <MaterialIcons name="chevron-right" size={24} color="#ccc" />
     </TouchableOpacity>
   );
+  const [open1, setOpen1] = useState(false);
   return (
     <SafeAreaView style={styles.safeArea}>
       {isLoading ? <LoadingModal /> : null}
@@ -91,11 +102,24 @@ const CommunityChip = ({ item, index }: any) => (
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Home</Text>
         <View style={styles.headerRight}>
-          <Text style={styles.greetingText}>Hi, Aman!</Text>
+          <Text style={styles.greetingText}>Hi, {isLogin?.user_data?.first_name}!</Text>
           {/* Custom Avatar */}
-          <View style={styles.customAvatar}>
-            <MaterialIcons name="person" size={24} color="#fff" />
-          </View>
+         <View style={styles.customAvatar}>
+  {isLogin?.user_data?.image ? (
+    <Image
+      source={{ uri: isLogin?.user_data?.image }}
+      style={{
+         width: 40,
+  height: 40,
+  borderRadius: 20,
+  resizeMode: "cover",
+      }}
+    />
+  ) : (
+    <MaterialIcons name="person" size={24} color="#fff" />
+  )}
+</View>
+
         </View>
       </View>
 
@@ -132,6 +156,12 @@ const CommunityChip = ({ item, index }: any) => (
         </View>
         <View style={{ height: 100 }} />
       </ScrollView>
+
+      <YourScheduleEventModal
+        visible={open1}
+        onClose={() => setOpen1(false)}
+        // onSubmit={EventApicall}
+      />
  <JoinCommunityModal visible={open} data={selected} onClose={() => setOpen(false)} />      <FabSpeedDial />
     </SafeAreaView>
   );

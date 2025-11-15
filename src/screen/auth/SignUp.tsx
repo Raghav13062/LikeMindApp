@@ -5,8 +5,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
-    Alert,
-    KeyboardAvoidingView,
+     KeyboardAvoidingView,
     Platform,
     TouchableWithoutFeedback,
     Keyboard,
@@ -124,7 +123,10 @@ import ErrorText from '../../compoent/ErrorText';
                 password: passwordWithoutSpaces,
                 userName: trimmedName,
                 navigation: navigation,
-                type: role,
+                // type: role,
+                                 type: "USER",
+
+                
              };
             
             const response = await SinupCustomer(params, setLoading);

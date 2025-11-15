@@ -216,46 +216,7 @@ const EventApicall = async (
       errorToast('Network error');
     }
   };
-  const DeleteEvent = async (
-     setLoading: (loading: boolean) => void ,
-     item:any
-  ) => {
-    setLoading(true);
-  
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const formData = new FormData();
-  if(item){
-    formData.append("id",item);
-  }
- 
-      const response = await fetch(`${base_url}/delete-event`, {
-        method: "POST",
-        headers: {
-           'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-        },
-        body: formData,
-      });
-  
-      const text = await response.text();
-      const json = JSON.parse(text);
-  
-      setLoading(false);
-  
-      if (json.status == '1') {
-        successToast(json?.message);
-      } else {
-        errorToast(json?.message);
-       }
-  
-      return json;
-    } catch (error) {
-      console.log("error", error);
-      setLoading(false);
-      errorToast('Network error');
-    }
-  };
+
 
 
 
@@ -300,4 +261,47 @@ const EventApicall = async (
       setLoading(false);
     }
   };
-  export { DeleteEvent,getgroups,EventApicall,updateEvent,GetEventPaid,GeteventCategories }  
+  export { getgroups,EventApicall,updateEvent,GetEventPaid,GeteventCategories }  
+
+
+
+  //   const DeleteEvent = async (
+  //    setLoading: (loading: boolean) => void ,
+  //    item:any
+  // ) => {
+  //   setLoading(true);
+  
+  //   try {
+  //     const token = await AsyncStorage.getItem("token");
+  //     const formData = new FormData();
+  // if(item){
+  //   formData.append("id",item);
+  // }
+ 
+  //     const response = await fetch(`${base_url}/delete-event`, {
+  //       method: "POST",
+  //       headers: {
+  //          'Authorization': `Bearer ${token}`,
+  //         'Accept': 'application/json',
+  //       },
+  //       body: formData,
+  //     });
+  
+  //     const text = await response.text();
+  //     const json = JSON.parse(text);
+  
+  //     setLoading(false);
+  
+  //     if (json.status == '1') {
+  //       successToast(json?.message);
+  //     } else {
+  //       errorToast(json?.message);
+  //      }
+  
+  //     return json;
+  //   } catch (error) {
+  //     console.log("error", error);
+  //     setLoading(false);
+  //     errorToast('Network error');
+  //   }
+  // };

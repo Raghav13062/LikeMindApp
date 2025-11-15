@@ -21,6 +21,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Switched to Ionico
 import ScreenNameEnum from "../../routes/screenName.enum";
 import { useNavigation } from "@react-navigation/native";
 import LocationSearchModal from "../../compoent/LocationSearchModal";
+import DatePicker from "react-native-date-picker";
+import { base_url } from "../../Api";
 
 // --- 🎨 Premium Color Palette ---
 const COLORS = {
@@ -74,6 +76,12 @@ const EventListScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false); // New state for submit loading
   const [modalVisible1, setModalVisible1] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+const [endDate, setEndDate] = useState(new Date());
+
+const [openStart, setOpenStart] = useState(false);
+const [openEnd, setOpenEnd] = useState(false);
+
   // ... (fetchEvents, useEffect, pickImage functions remain the same)
   // Fetch events
   const fetchEvents = async () => {
@@ -102,6 +110,44 @@ const EventListScreen = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+     const DeleteEvent = async (
+   ) => {
+    setLoading(true);
+  
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const formData = new FormData();
+  if(item){
+    formData.append("id",item);
+  }
+ 
+      const response = await fetch(`${base_url}/delete-event`, {
+        method: "POST",
+        headers: {
+           'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
+  
+      const text = await response.text();
+      const json = JSON.parse(text);
+  
+      setLoading(false);
+  
+      if (json.status == '1') {
+        successToast(json?.message);
+      } else {
+        errorToast(json?.message);
+       }
+  
+      return json;
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+      errorToast('Network error');
+    }
+  };
 
   // Image picker
   const pickImage = () => {
@@ -116,6 +162,10 @@ const EventListScreen = () => {
 
   // Create event
   const createEvent = async () => {
+    const formatDate = (date) => {
+  return date.toISOString().split("T")[0];  // gives YYYY-MM-DD
+};
+
     if (!title || !name || !about || !price || !image) {
       alert("Please fill all fields and select an image.");
       return;
@@ -135,8 +185,12 @@ const EventListScreen = () => {
       const formdata = new FormData();
       formdata.append("title", title);
       formdata.append("name", name);
+       endDate
       formdata.append("about", about);
       formdata.append("price", price);
+formdata.append("start_date", formatDate(startDate));
+formdata.append("end_date", formatDate(endDate));
+
       formdata.append("category_id", categoryId);
       if(selectedLocation.latitude){
   formdata.append("lat", selectedLocation.latitude);
@@ -159,7 +213,7 @@ const EventListScreen = () => {
       );
 
       const result = await response.json();
-      console.log(result);
+      console.log("result",result);
       if (result.success) {
         fetchEvents();
         setModalVisible(false);
@@ -169,6 +223,8 @@ const EventListScreen = () => {
         setPrice("");
         setImage(null);
       } else {
+              console.error("Event creation error:", error);
+
         alert(result.message || "Failed to create event.");
       }
     } catch (error) {
@@ -178,7 +234,45 @@ const EventListScreen = () => {
       setIsSubmitting(false);
     }
   };
-
+   const DeleteEventw = async (
+      item,
+   ) => {
+    setLoading(true);
+  
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const formData = new FormData();
+  if(item){
+    formData.append("id",item);
+  }
+ 
+      const response = await fetch(`${base_url}/delete-event`, {
+        method: "POST",
+        headers: {
+           'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
+  
+      const text = await response.text();
+      const json = JSON.parse(text);
+  
+      setLoading(false);
+  console.log("DeleteEvent response:", json);
+      if (json.status == '1') {
+        // successToast(json?.message);
+      } else {
+        errorToast(json?.message);
+       }
+  
+      return json;
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+      errorToast('Network error');
+    }
+  };
   const closeModal = () => {
     setModalVisible(false);
   };
@@ -318,7 +412,53 @@ const EventListScreen = () => {
                 keyboardType="numeric"
               />
 
-            
+            {/* ---------- Start Date Picker ---------- */}
+<Text style={styles.inputLabel}>Start Date & Time</Text>
+<TouchableOpacity 
+  style={styles.dateBox}
+  onPress={() => setOpenStart(true)}
+>
+  <Text style={styles.dateText}>
+    {startDate.toLocaleString()}
+  </Text>
+</TouchableOpacity>
+
+<DatePicker
+  modal
+  open={openStart}
+  date={startDate}
+  mode="datetime"
+  onConfirm={(date) => {
+    setOpenStart(false);
+    setStartDate(date);
+  }}
+  onCancel={() => setOpenStart(false)}
+/>
+
+
+{/* ---------- End Date Picker ---------- */}
+<Text style={styles.inputLabel}>End Date & Time</Text>
+<TouchableOpacity 
+  style={styles.dateBox}
+  onPress={() => setOpenEnd(true)}
+>
+  <Text style={styles.dateText}>
+    {endDate.toLocaleString()}
+  </Text>
+</TouchableOpacity>
+
+  <DatePicker
+  modal
+  open={openEnd}
+  date={endDate}
+  mode="datetime"
+  onConfirm={(date) => {
+    setOpenEnd(false);
+    setEndDate(date);
+  }}
+  onCancel={() => setOpenEnd(false)}
+/>
+
               <LocationSearchModal
                 visible={modalVisible1}
                 onClose={() => setModalVisible1(false)}
@@ -638,4 +778,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  dateBox: {
+  borderWidth: 1,
+  borderColor: '#E0E0E0',
+  borderRadius: 10,
+  padding: Platform.OS === 'ios' ? 16 : 12,
+  backgroundColor: COLORS.background,
+  marginBottom: 15,
+},
+
+dateText: {
+  fontSize: 16,
+  color: COLORS.textPrimary,
+},
+
 });

@@ -33,8 +33,9 @@ export default function Login() {
   // const [email, setEmail] = useState('shard112@gmail.com');
   // const [password, setPassword] = useState('1234567');
 
-  const [email, setEmail] = useState('user@gmail.com');
-  const [password, setPassword] = useState('12345678');
+  const [email, setEmail] = useState('test2@gmail.com');
+  
+  const [password, setPassword] = useState('123456');
   //  const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');

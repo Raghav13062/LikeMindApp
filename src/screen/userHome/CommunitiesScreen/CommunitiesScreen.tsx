@@ -278,8 +278,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 3, // Android shadow
-    alignItems: 'center',
+     alignItems: 'center',
   },
   cardImage: {
     width: 55,
@@ -348,8 +347,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 5, // Android shadow
-  },
+   },
   fabText: {
     color: '#FFFFFF',
     fontSize: 16,

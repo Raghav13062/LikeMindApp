@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import {
   Modal,
@@ -5,35 +6,115 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image
+  Image,
+  ActivityIndicator,
 } from "react-native";
+import { successToast } from "../utils/customToast";
 
-// --- Theme Definition ---
 const THEME = {
-  primary: "#F39C12", // Accent color (Orange/Amber)
-  secondary: "#34495E", // Darker text/button color (Navy/Slate)
-  background: "#FFFFFF", // Card background
-  textDark: "#2C3E50", // Main text color
-  textMuted: "#7F8C8D", // Description/muted text color
-  success: "#2ECC71", // Used for 'Free' price
-  border: "rgba(44, 62, 80, 0.1)", // Light border for subtle separation
+  primary: "#F39C12",
+  secondary: "#34495E",
+  background: "#FFFFFF",
+  textDark: "#2C3E50",
+  textMuted: "#7F8C8D",
+  success: "#2ECC71",
+  border: "rgba(44, 62, 80, 0.1)",
 };
 
-export const JoinCommunityModal = ({ visible, data, onClose, onJoin }: any) => {
+export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
+  const [loading, setLoading] = React.useState(false);
+
   if (!data) return null;
 
   const isFree = data?.price == "0" || data?.price == 0;
   const priceDisplay = isFree ? "Free" : `₹ ${data.price}`;
 
+  const onJoin = async () => {
+    try {
+      setLoading(true); // START LOADER
+
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        console.log("Token not found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(
+        "https://onetenbd.com/likemind/api/join-community",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            community_id: data.id,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      setLoading(false); // STOP LOADER
+
+      if (result.success == true) {
+        successToast(result.message);
+        onClose();
+      }
+    } catch (error) {
+      console.log("Join API Error:", error);
+      setLoading(false);
+    }
+  };
+
+    const onDei = async () => {
+    try {
+      setLoading(true); // START LOADER
+
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        console.log("Token not found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(
+        "https://onetenbd.com/likemind/api/delete-communities",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: data.id,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      setLoading(false); // STOP LOADER
+
+      if (result.success == true) {
+        successToast(result.message);
+        onClose();
+      }
+    } catch (error) {
+      console.log("Join API Error:", error);
+      setLoading(false);
+    }
+  };
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
         <View style={styles.card}>
-          
-          {/* Close Indicator (optional, but good practice) */}
+
           <View style={styles.closeIndicator} />
 
-          {/* Community Image */}
           <Image
             source={{
               uri: data.image || "https://via.placeholder.com/150?text=Community",
@@ -42,38 +123,48 @@ export const JoinCommunityModal = ({ visible, data, onClose, onJoin }: any) => {
             resizeMode="cover"
           />
 
-          {/* Title */}
           <Text style={styles.title}>{data.name}</Text>
 
-          {/* Tag */}
-          {data.tags ? <Text style={styles.tag}>#{data.tags.toUpperCase()}</Text> : null}
+          {data.tags ? (
+            <Text style={styles.tag}>#{data.tags.toUpperCase()}</Text>
+          ) : null}
 
-          {/* Price */}
           <Text style={[styles.price, isFree && styles.priceFree]}>
             {priceDisplay}
           </Text>
 
-          {/* Separator */}
           <View style={styles.separator} />
 
-          {/* Description */}
           <Text style={styles.desc}>
-            {data.description || "Join this thriving community to connect with like-minded individuals, share insights, and grow together. No description available."}
+            {data.description ||
+              "Join this thriving community to connect with like-minded individuals."}
           </Text>
 
-          {/* Buttons */}
+          {/* BUTTONS */}
           <View style={styles.row}>
-            {/* Primary Action Button: Join */}
-            <TouchableOpacity style={styles.joinBtn} onPress={onJoin}>
-              <Text style={styles.joinTxt}>
-                {isFree ? "Join Community" : "Enroll Now"}
-              </Text>
+            
+            {/* JOIN BUTTON WITH LOADER */}
+            <TouchableOpacity
+              style={[styles.joinBtn, loading && { opacity: 0.7 }]}
+              onPress={onJoin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.joinTxt}>
+                  {/* {isFree ? "Join Community" : "Enroll Now"} */}
+                                 Join Community
+
+                </Text>
+              )}
             </TouchableOpacity>
 
-            {/* Secondary Action Button: Close */}
+            {/* CANCEL BUTTON */}
             <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
               <Text style={styles.closeTxt}>Cancel / Close</Text>
             </TouchableOpacity>
+
           </View>
 
         </View>
@@ -82,68 +173,67 @@ export const JoinCommunityModal = ({ visible, data, onClose, onJoin }: any) => {
   );
 };
 
-// --- Enhanced Styles ---
+
+// ============================
+//        STYLES
+// ============================
 
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.55)", // Darker overlay for better focus
+    backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
-    alignItems: "stretch", // Stretch to the edges of the padding
     paddingHorizontal: 25,
   },
   card: {
     backgroundColor: THEME.background,
-    borderRadius: 20, // Slightly more rounded
+    borderRadius: 20,
     padding: 25,
-    elevation: 15, // Stronger shadow
+    elevation: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
   },
   closeIndicator: {
-    // Subtle grip bar often seen in modals
     width: 40,
     height: 4,
     backgroundColor: THEME.border,
     borderRadius: 2,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 10,
   },
   image: {
-    width: 100, // Slightly larger image
+    width: 100,
     height: 100,
-    borderRadius: 50, // Perfect circle
+    borderRadius: 50,
     alignSelf: "center",
     marginBottom: 16,
-    borderWidth: 3, // Add a border matching the theme
+    borderWidth: 3,
     borderColor: THEME.primary,
   },
   title: {
-    fontSize: 24, // Larger title
+    fontSize: 24,
     fontWeight: "800",
     textAlign: "center",
     color: THEME.textDark,
-    marginBottom: 4,
   },
   tag: {
     textAlign: "center",
     fontSize: 12,
     color: THEME.textMuted,
     fontWeight: "700",
-    letterSpacing: 0.8,
     marginBottom: 10,
   },
   price: {
     marginTop: 8,
-    fontSize: 20, // Prominent price
+    fontSize: 20,
     fontWeight: "900",
     color: THEME.secondary,
     textAlign: "center",
   },
   priceFree: {
-    color: THEME.success, // Use a success color for 'Free'
+    color: THEME.success,
   },
   separator: {
     height: 1,
@@ -154,31 +244,29 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     color: THEME.textMuted,
-    lineHeight: 22,
-    marginBottom: 20, // More space before buttons
+    marginBottom: 20,
+    lineHeight: 20,
   },
   row: {
-    flexDirection: "column", // Stack buttons for better mobile experience
-    gap: 10, // Use gap for spacing between stacked elements
+    flexDirection: "column",
+    gap: 10,
   },
   joinBtn: {
-    // Primary Button (Join/Enroll)
     backgroundColor: THEME.primary,
-    paddingVertical: 14, // Taller button
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
   },
   joinTxt: {
     fontWeight: "800",
     fontSize: 16,
-    color: THEME.background, // White text on colored background
+    color: "#fff",
   },
   closeBtn: {
-    // Secondary Button (Cancel/Close)
-    backgroundColor: THEME.background, // White background
+    backgroundColor: THEME.background,
     paddingVertical: 14,
     borderRadius: 12,
-    borderWidth: 2, // Stronger border to define the button
+    borderWidth: 2,
     borderColor: THEME.border,
     alignItems: "center",
   },

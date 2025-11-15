@@ -77,6 +77,33 @@
         }
       }
     },
+    "react-native-date-picker": {
+      "root": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-date-picker",
+      "name": "react-native-date-picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-date-picker/react-native-date-picker.podspec",
+          "version": "5.0.13",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-date-picker/android",
+          "packageImportPath": "import com.henninghall.date_picker.DatePickerPackage;",
+          "packageInstance": "new DatePickerPackage()",
+          "buildTypes": [],
+          "libraryName": "RNDatePickerSpecs",
+          "componentDescriptors": [
+            "RNDatePickerComponentDescriptor"
+          ],
+          "cmakeListsPath": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "/Users/raghav/Documents/aman_work/LikeMind/node_modules/react-native-gesture-handler",
       "name": "react-native-gesture-handler",

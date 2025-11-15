@@ -40,7 +40,7 @@ import { loginSuccess } from '../../../redux/feature/authSlice';
   ImagePicker.openPicker({
     width: 300,
     height: 400,
-    cropping: true,
+    cropping: false,
   })
     .then((image) => {
       setImagePrfile(image)

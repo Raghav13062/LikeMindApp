@@ -324,16 +324,11 @@ import { useNavigation } from '@react-navigation/native';
 // हम इसे API डेटा से नहीं बल्कि API डेटा पर आधारित एक ग्रुप लिस्ट मान रहे हैं।
 const MOCK_COMMUNITIES_DATA = [
   { id: 101, name: 'Tech Innovators Hub', members: 1250, description: 'Discussions on AI and latest gadgets.', image: 'https://via.placeholder.com/150/F39C12/FFFFFF?text=T' },
-  { id: 102, name: 'Local Foodies', members: 450, description: 'Best places to eat around the city.', image: 'https://via.placeholder.com/150/2ECC71/FFFFFF?text=F' },
-  { id: 103, name: 'Fitness Fanatics India', members: 982, description: 'Workout tips and health goals.', image: 'https://via.placeholder.com/150/3498DB/FFFFFF?text=Gym' },
-  { id: 104, name: 'Coding Bootcamp Graduates', members: 320, description: 'Job openings and coding challenges.', image: 'https://via.placeholder.com/150/E74C3C/FFFFFF?text=Code' },
-  { id: 105, name: 'Hobby Photographers', members: 678, description: 'Sharing clicks and learning skills.', image: 'https://via.placeholder.com/150/9B59B6/FFFFFF?text=Photo' },
 ];
 
 const DiscoverGroupsScreen = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  // हम सीधे ग्रुप्स डेटा का उपयोग करेंगे, न कि 'users' का
   const [groups, setGroups] = useState(MOCK_COMMUNITIES_DATA); 
   const [filteredGroups, setFilteredGroups] = useState(MOCK_COMMUNITIES_DATA); 
   const [searchText, setSearchText] = useState(''); 

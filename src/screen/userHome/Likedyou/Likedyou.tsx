@@ -1,5 +1,5 @@
 // UpcomingEventsScreen.js (Simplified & Compact UI)
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import StatusBarComponent from '../../../compoent/StatusBarCompoent'; 
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 32;
@@ -114,6 +115,38 @@ const UpcomingEventsScreen = () => {
       </View>
     );
   };
+
+  useEffect(() => {
+
+    getJoinedUsers()
+  },[])
+const getJoinedUsers = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("community_id", 6);
+
+    const response = await fetch(
+      "https://onetenbd.com/likemind/api/join-community",
+      {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+    console.log("Joined Users Data:", data);
+
+  } catch (error) {
+    console.error("API Error:", error);
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
