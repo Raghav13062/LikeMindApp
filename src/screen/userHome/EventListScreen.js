@@ -23,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import LocationSearchModal from "../../compoent/LocationSearchModal";
 import DatePicker from "react-native-date-picker";
 import { base_url } from "../../Api";
+import { useSelector } from "react-redux";
 
 // --- 🎨 Premium Color Palette ---
 const COLORS = {
@@ -166,11 +167,14 @@ const [openEnd, setOpenEnd] = useState(false);
   return date.toISOString().split("T")[0];  // gives YYYY-MM-DD
 };
 
-    if (!title || !name || !about || !price || !image) {
+    // if (!title || !name || !about || !price || !image) {
+    //   alert("Please fill all fields and select an image.");
+    //   return;
+    // }
+  if (!title || !image) {
       alert("Please fill all fields and select an image.");
       return;
     }
-
     setIsSubmitting(true);
     try {
       const token = await AsyncStorage.getItem("token");
@@ -234,6 +238,8 @@ formdata.append("end_date", formatDate(endDate));
       setIsSubmitting(false);
     }
   };
+   const isLogin = useSelector((state) => state?.auth?.userData);
+     // ✔ Check owner
    const DeleteEventw = async (
       item,
    ) => {
@@ -259,8 +265,8 @@ formdata.append("end_date", formatDate(endDate));
       const json = JSON.parse(text);
   
       setLoading(false);
-  console.log("DeleteEvent response:", json);
-      if (json.status == '1') {
+       if (json.status == '1') {
+         navigation.goBack()
         // successToast(json?.message);
       } else {
         errorToast(json?.message);
@@ -277,13 +283,19 @@ formdata.append("end_date", formatDate(endDate));
     setModalVisible(false);
   };
   const navigation = useNavigation()
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
+
+  const renderItem = ({ item }) => {
+          const isOwner = isLogin?.user_data?.id == item?.user_id;
+
+    return(
+       <View style={styles.card}>
+        
       <Image
         source={{ uri: item.image }}
         style={styles.cardImage}
         resizeMode="cover"
       />
+      
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
 
@@ -292,24 +304,54 @@ formdata.append("end_date", formatDate(endDate));
           <Text style={styles.cardName}>{item.name}</Text>
         </View>
 
-        <Text style={styles.cardAbout} >{item.about}</Text>
-
+ 
         <View style={styles.cardFooter}>
           <Text style={styles.cardPrice}>
             {item.price === null || item.price === '0' || item.price == 0
               ? 'FREE'
               : `₹${item.price}`}
           </Text>
-          <TouchableOpacity style={styles.detailsButton}
+
+          {item.joined == true ? (
+             <TouchableOpacity style={{
+                 flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12, // Reduced padding
+    paddingVertical: 8, // Reduced padding
+    backgroundColor: COLORS.secondary,
+    borderRadius: 8,
+    bottom: 7
+             }}
+            onPress={() => navigation.navigate(ScreenNameEnum.MarketProfileDetails, { item })}
+          >
+            <Text style={styles.detailsButtonText}>Joined</Text>
+           </TouchableOpacity>
+          ):(
+<>
+{!isOwner &&(
+   <TouchableOpacity style={styles.detailsButton}
             onPress={() => navigation.navigate(ScreenNameEnum.MarketProfileDetails, { item })}
           >
             <Text style={styles.detailsButtonText}>Join Event</Text>
             <Ionicons name="arrow-forward" size={14} color={COLORS.card} style={{ marginLeft: 5 }} />
           </TouchableOpacity>
+) }
+</>
+            
+          )}
+         
         </View>
       </View>
+      {isOwner &&    <TouchableOpacity 
+      
+      onPress={()=>DeleteEventw(item.id)}
+      style={{ position: 'absolute', top: 10, right: 10 }} >
+                <Ionicons name="trash" size={20} color={"red"} />
+</TouchableOpacity>}
+    
     </View>
-  );
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -537,8 +579,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     overflow: "hidden",
     flexDirection: 'row', // Horizontal layout
-    height: 120, // Fixed compact height
-  },
+   },
   cardImage: {
     width: 100, // Fixed width for image
     height: "100%",
@@ -577,13 +618,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5,
-    // Removed border for cleaner look
+     // Removed border for cleaner look
   },
   cardPrice: {
     fontSize: 16, // Reduced font size
     fontWeight: "800",
-    color: COLORS.secondary,
+    color: COLORS.success,
   },
   detailsButton: {
     flexDirection: 'row',

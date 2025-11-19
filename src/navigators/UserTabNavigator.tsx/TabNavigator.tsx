@@ -44,7 +44,7 @@ export default function TabNavigator() {
         tabBarStyle: {
           display: isKeyboardVisible ? 'none' : 'flex',
           paddingTop: 12,
-          height: 70,
+          height: 80,
         },
       }}
     >
@@ -70,7 +70,7 @@ export default function TabNavigator() {
                     style={{
                       fontWeight: '700',
                       color: focused ? '#F39C12' : '#999999',
-                      fontSize: 10,
+                      fontSize: 12,
                       marginTop: 4,
                       width: 55,
                       textAlign: 'center',

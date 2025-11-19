@@ -13,7 +13,7 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: '700', // ज्यादा बोल्ड
     color: '#333',
-    marginTop: 18,
+    marginTop: 10,
     marginBottom: 10,
     paddingHorizontal: 4,
   },

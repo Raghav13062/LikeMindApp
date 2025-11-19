@@ -48,6 +48,7 @@ const useHome = () => {
       setIsLoading(true);
       const response = await Usergetevents(setIsLoading);
       if (response?.data) {
+        console.log("Events data:", response.data);
           setevent(response.data)
       }  
     } catch (error) {

@@ -10,8 +10,19 @@ import ScreenNameEnum from '../../routes/screenName.enum';
 import { JoinCommunityModal } from '../../compoent/JoinCommunityModal';
 import YourScheduleEventModal from '../../compoent/YourScheduleEventModal';
  
-const NEXT_UP = { title: "Yoga & Mindfulness", date: "Wed, Oct 26 • 7:00 AM" };
+const getCurrentDate = () => {
+    const now = new Date();
+    const day = now.toLocaleDateString('en-US', { weekday: 'short' });
+    const month = now.toLocaleDateString('en-US', { month: 'short' });
+    const dateNum = now?.getDate();
+    const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return `${day}, ${month} ${dateNum} • ${time}`;
+  };
 
+  const NEXT_UP = { 
+      title: "Yoga & Mindfulness", 
+      date: getCurrentDate() 
+  };
 const SectionTitle = ({ title }: any) => (
   <Text style={styles.sectionTitle}>{title}</Text>
 );
@@ -78,8 +89,9 @@ const CommunityChip = ({ item, index }: any) => (
   </TouchableOpacity>
 );
 ;
-  const EventListItem = ({ item, isLast }: any) => (
-    <TouchableOpacity
+  const EventListItem = ({ item, isLast }: any) => {
+     return(
+        <TouchableOpacity
       onPress={() => {
         navigation.navigate(ScreenNameEnum.MarketProfileDetails, {
           item: item
@@ -93,7 +105,8 @@ const CommunityChip = ({ item, index }: any) => (
       </View>
       <MaterialIcons name="chevron-right" size={24} color="#ccc" />
     </TouchableOpacity>
-  );
+    )
+  }
   const [open1, setOpen1] = useState(false);
   return (
     <SafeAreaView style={styles.safeArea}>

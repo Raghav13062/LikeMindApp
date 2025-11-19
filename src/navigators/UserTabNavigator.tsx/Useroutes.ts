@@ -28,7 +28,7 @@ const Useroutes = [
   {
     name: ScreenNameEnum.Likedyou,
     Component: Likedyou,
-    label: "Liked you",
+    label: "Events",
     logo: imageIndex.Favorite,
     logo1: imageIndex.heart,
   },

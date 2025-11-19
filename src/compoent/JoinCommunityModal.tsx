@@ -10,6 +10,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { successToast } from "../utils/customToast";
+import { useSelector } from "react-redux";
+import { base_url } from "../Api";
+import { useNavigation } from "@react-navigation/native";
+import ScreenNameEnum from "../routes/screenName.enum";
 
 const THEME = {
   primary: "#F39C12",
@@ -19,27 +23,28 @@ const THEME = {
   textMuted: "#7F8C8D",
   success: "#2ECC71",
   border: "rgba(44, 62, 80, 0.1)",
+  danger: "#E74C3C",
 };
 
-export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
-  const [loading, setLoading] = React.useState(false);
+export const JoinCommunityModal = ({ visible, data, onClose, onJoined }: any) => {
+  const [loadingJoin, setLoadingJoin] = React.useState(false);
+
+  const isLogin: any = useSelector<any>((state) => state?.auth?.userData);
+const nav = useNavigation()
+  // ✔ Check owner
+  const isOwner = isLogin?.user_data?.id == data?.user_id;
 
   if (!data) return null;
 
   const isFree = data?.price == "0" || data?.price == 0;
   const priceDisplay = isFree ? "Free" : `₹ ${data.price}`;
 
+  // ================= JOIN API =================
   const onJoin = async () => {
     try {
-      setLoading(true); // START LOADER
-
+      setLoadingJoin(true);
       const token = await AsyncStorage.getItem("token");
-
-      if (!token) {
-        console.log("Token not found");
-        setLoading(false);
-        return;
-      }
+      if (!token) return setLoadingJoin(false);
 
       const response = await fetch(
         "https://onetenbd.com/likemind/api/join-community",
@@ -50,36 +55,32 @@ export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            community_id: data.id,
-          }),
+          body: JSON.stringify({ community_id: data.id }),
         }
       );
 
       const result = await response.json();
-      setLoading(false); // STOP LOADER
+      setLoadingJoin(false);
 
-      if (result.success == true) {
+      if (result.success) {
         successToast(result.message);
+
+        // Mark as joined without refreshing
+        data.joined = true; 
+
+        onJoined && onJoined(); // optional callback
         onClose();
       }
     } catch (error) {
       console.log("Join API Error:", error);
-      setLoading(false);
+      setLoadingJoin(false);
     }
   };
 
-    const onDei = async () => {
+   const onDelete = async () => {
     try {
-      setLoading(true); // START LOADER
-
       const token = await AsyncStorage.getItem("token");
-
-      if (!token) {
-        console.log("Token not found");
-        setLoading(false);
-        return;
-      }
+      if (!token) return;
 
       const response = await fetch(
         "https://onetenbd.com/likemind/api/delete-communities",
@@ -90,29 +91,26 @@ export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            id: data.id,
-          }),
+          body: JSON.stringify({ id: data.id }),
         }
       );
 
       const result = await response.json();
-      setLoading(false); // STOP LOADER
-
-      if (result.success == true) {
-        successToast(result.message);
+      if (result.success) {
+        nav.goBack()
+        successToast("Community Deleted Successfully");
         onClose();
       }
     } catch (error) {
-      console.log("Join API Error:", error);
-      setLoading(false);
+      console.log("Delete API Error:", error);
     }
   };
+// ================= DELETE API =================
+ 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
         <View style={styles.card}>
-
           <View style={styles.closeIndicator} />
 
           <Image
@@ -125,9 +123,7 @@ export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
 
           <Text style={styles.title}>{data.name}</Text>
 
-          {data.tags ? (
-            <Text style={styles.tag}>#{data.tags.toUpperCase()}</Text>
-          ) : null}
+          {data.tags && <Text style={styles.tag}>#{data.tags.toUpperCase()}</Text>}
 
           <Text style={[styles.price, isFree && styles.priceFree]}>
             {priceDisplay}
@@ -137,46 +133,67 @@ export const JoinCommunityModal = ({ visible, data, onClose }: any) => {
 
           <Text style={styles.desc}>
             {data.description ||
-              "Join this thriving community to connect with like-minded individuals."}
+              "Join this community and connect with like-minded people."}
           </Text>
 
-          {/* BUTTONS */}
+          {/* ================= BUTTON AREA ================= */}
           <View style={styles.row}>
-            
-            {/* JOIN BUTTON WITH LOADER */}
-            <TouchableOpacity
-              style={[styles.joinBtn, loading && { opacity: 0.7 }]}
-              onPress={onJoin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={styles.joinTxt}>
-                  {/* {isFree ? "Join Community" : "Enroll Now"} */}
-                                 Join Community
 
-                </Text>
-              )}
-            </TouchableOpacity>
+            {/* ---------- OWNER OPTIONS ---------- */}
+            {isOwner ? (
+              <>
+                <TouchableOpacity style={styles.deleteBtn} onPress={onDelete}>
+                  <Text style={styles.deleteTxt}>Delete Community 🗑️</Text>
+                </TouchableOpacity>
 
-            {/* CANCEL BUTTON */}
+                {/* <TouchableOpacity
+                  style={styles.chatBtn}
+                  onPress={() => console.log("Owner Chat")}
+                >
+                  <Text style={styles.chatTxt}>Chat Now 💬</Text>
+                </TouchableOpacity> */}
+              </>
+            ) : (
+              <>
+                {/* ---------- IF JOINED SHOW CHAT ---------- */}
+                {data?.joined ? (
+                  <TouchableOpacity
+                    
+                    
+ 
+                  >
+                    <Text style={styles.chatTxt}>Joined</Text>
+                  </TouchableOpacity>
+                ) : (
+                  /* ---------- IF NOT JOINED SHOW JOIN ---------- */
+                  <TouchableOpacity
+                    style={[styles.joinBtn, loadingJoin && { opacity: 0.6 }]}
+                    onPress={onJoin}
+                    disabled={loadingJoin}
+                  >
+                    {loadingJoin ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.joinTxt}>Join Community</Text>
+                    )}
+                  </TouchableOpacity>
+                )}
+              </>
+            )}
+
+            {/* CANCEL */}
             <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-              <Text style={styles.closeTxt}>Cancel / Close</Text>
+              <Text style={styles.closeTxt}>Cancel</Text>
             </TouchableOpacity>
 
           </View>
-
         </View>
       </View>
     </Modal>
   );
 };
 
-
-// ============================
-//        STYLES
-// ============================
+// ============ STYLES ==================================
 
 const styles = StyleSheet.create({
   modalOverlay: {
@@ -190,10 +207,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 25,
     elevation: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
   },
   closeIndicator: {
     width: 40,
@@ -249,8 +262,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "column",
-    gap: 10,
+    gap: 12,
   },
+
   joinBtn: {
     backgroundColor: THEME.primary,
     paddingVertical: 14,
@@ -262,6 +276,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
   },
+
+  chatBtn: {
+    backgroundColor: THEME.success,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  chatTxt: {
+    fontWeight: "800",
+    fontSize: 16,
+    color: "#4CAF50",
+    textAlign:"center"
+  },
+
+  deleteBtn: {
+    backgroundColor: THEME.danger,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  deleteTxt: {
+    fontWeight: "800",
+    fontSize: 16,
+    color: "#fff",
+  },
+
   closeBtn: {
     backgroundColor: THEME.background,
     paddingVertical: 14,

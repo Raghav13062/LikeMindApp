@@ -6,9 +6,11 @@ import {
   UserGetCateoryApi,
   UserGetCommunitiesApi,
 } from '../../../Api/apiRequest';
+import { useSelector } from 'react-redux';
 
 const useCommunities = () => {
   const navigation: any = useNavigation();
+  const isLogin:any = useSelector <any>((state) => state?.auth?.userData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -53,7 +55,7 @@ const useCommunities = () => {
       setIsLoading(true);
       const response = await UserGetCommunitiesApi(setIsLoading);
       const data = response?.data || [];
-      setCommunitiesList(data);
+       setCommunitiesList(data);
       setFilteredList(data);
     } catch (error) {
       console.error('Community fetch error:', error);
@@ -127,6 +129,7 @@ const useCommunities = () => {
     handleCategorySelect,
     handleClearFilters,
     handleSubmit,
+    isLogin
   };
 };
 

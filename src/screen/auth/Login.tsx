@@ -25,16 +25,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ErrorText from '../../compoent/ErrorText';
  
 export default function Login() {
- 
-  // const [email, setEmail] = useState('admin@gmail.com');
-  //  const [password, setPassword] = useState('123456');
-  // const [email, setEmail] = useState('paid@gmail.com');
-  // const [password, setPassword] = useState('Aman@1234567');
-  // const [email, setEmail] = useState('shard112@gmail.com');
-  // const [password, setPassword] = useState('1234567');
-
-  const [email, setEmail] = useState('test2@gmail.com');
-  
+// admin@gmail.com
+// test@gmail.com
+// admin12@gmail.com
+  const [email, setEmail] = useState('admin12@gmail.com');
   const [password, setPassword] = useState('123456');
   //  const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');

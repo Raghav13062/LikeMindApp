@@ -19,53 +19,13 @@ import CreateCommunityModal from '../../../compoent/CreateCommunityModal';
 import FilterModal from './FilterModal';
 import imageIndex from '../../../assets/imageIndex'; 
 import { JoinCommunityModal } from '../../../compoent/JoinCommunityModal';
+import { Tuple } from '@reduxjs/toolkit';
+import ScreenNameEnum from '../../../routes/screenName.enum';
+import { useNavigation } from '@react-navigation/native';
 
 // --- External Component: CommunityCard ---
 // Moved outside the main component to prevent re-rendering on parent state changes
-const CommunityCard = React.memo(({ item, onSelect }: { item: any; onSelect: (item: any) => void }) => {
-  const handlePress = () => {
-    onSelect(item);
-  };
 
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={handlePress}>
-      <Image 
-        source={{ uri: item.logo || item.image || 'https://via.placeholder.com/100' }} 
-        style={styles.cardImage} 
-      />
-
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle} numberOfLines={1}>
-          {item?.name || 'Untitled Community'}
-        </Text>
-        <Text style={styles.cardDescription} numberOfLines={2}>
-          {item?.description || 'A growing community. Join now to participate!'}
-        </Text>
-        
-        {/* Price Tag */}
-        {item?.price > 0 && (
-          <Text style={styles.priceText}>
-            Price: ₹{item.price}
-          </Text>
-        )}
-             
-        {/* Category Chip */}
-        {item?.category && (
-          <View style={styles.chip}>
-            <Text style={styles.chipText}>{item.category}</Text>
-          </View>
-        )}
-      </View>
-      <TouchableOpacity
-        style={styles.joinBtn}
-        onPress={handlePress} // Use the same press handler for the button
-        activeOpacity={0.7}
-      >
-        <Text style={styles.joinBtnText}>Join</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
-});
 
 // --- Main Screen Component ---
 export default function CommunitiesScreen() {
@@ -83,19 +43,127 @@ export default function CommunitiesScreen() {
     selectedCategories,
     handleCategorySelect,
     handleClearFilters,
+    isLogin
   } = useCommunities();
-
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedCommunity, setSelectedCommunity] = useState<any>(null);
-
-  // Unified handler for card/join button press
+const navigation = useNavigation()
   const handleCommunitySelect = (community: any) => {
     setSelectedCommunity(community);
     setShowJoinModal(true);
   };
+  const CommunityCard = React.memo(({ item, onSelect }: { item: any; onSelect: (item: any) => void }) => {
+  const handlePress = () => {
+    onSelect(item);
+  };
+
+    const handleDelete = () => {
+    onSelect(item);
+  };
+  const  isOwner= isLogin?.user_data.id == item?.user_id ? true : false
+  return (
+    <View style={styles.card}   >
+      <TouchableOpacity        onPress={handlePress} // Use the same press handler for the button
+>
+      <Image 
+        source={{ uri: item.logo || item.image || 'https://via.placeholder.com/100' }} 
+        style={styles.cardImage} 
+      /></TouchableOpacity>
+
+      <View style={styles.cardContent}>
+        <Text style={styles.cardTitle} numberOfLines={1}>
+          {item?.name || 'Untitled Community'}
+        </Text>
+        
+        {/* <Text style={styles.cardDescription} numberOfLines={2}>
+          {item?.description || 'A growing community. Join now to participate!'}
+        </Text> */}
+        
+        {/* Price Tag */}
+        {item?.price > 0 && (
+          <Text style={styles.priceText}>
+            Price: ₹{item.price}
+          </Text>
+        )}
+            {item?.joined === true && (
+  <Text style={[styles.priceText,{
+    color: 'blue',
+  }]}>
+    Joined
+  </Text>
+)}
+
+        {/* Category Chip */}
+        {item?.category && (
+          <View style={styles.chip}>
+            <Text style={styles.chipText}>{item.category}</Text>
+          </View>
+        )}
+      </View>
+
+      { isOwner == false && item?.joined == false ?( 
+
+        <TouchableOpacity
+        style={styles.joinBtn}
+       onPress={handlePress} // Use the same press handler for the button
+        activeOpacity={0.7}
+      >
+<Text style={styles.joinBtnText}>
+   Join
+</Text>
+      </TouchableOpacity>
+      ) :
+      
+      <>
+ {isOwner  && item?.joined == false &&(
+  <TouchableOpacity       
+   onPress={() =>
+          navigation.navigate(ScreenNameEnum.ChatDetails, { item: item })
+        }
   
+  // Use the same press handler for the button
+>
+  <Image source={imageIndex.message} style={{
+  height:30,
+  width:30 ,
+  resizeMode:"contain",
+  marginTop:11,
+  marginLeft:11
+}}/>
+</TouchableOpacity>
+ )}
+
+  </>
+      }
+
+      
+
+    
+      
+{item?.joined == true  && (   
+
+ <TouchableOpacity
+         onPress={handlePress} // Use the same press handler for the button
+        activeOpacity={0.7}
+        style={{alignItems:"center",   }}
+      >
+<Image source={imageIndex.message} style={{
+  height:30,
+  width:30 ,
+  resizeMode:"contain",
+  marginTop:11
+}}/>
+      </TouchableOpacity>
+
+) }
+
+      
+    </View>
+  );
+});
   const renderCommunityCard = ({ item }: { item: any }) => (
-    <CommunityCard item={item} onSelect={handleCommunitySelect} />
+    <CommunityCard item={item}
+     onSelect={handleCommunitySelect} />
   );
 
   return (
