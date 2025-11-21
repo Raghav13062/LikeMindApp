@@ -18,13 +18,13 @@ const Useroutes = [
     logo1: imageIndex.HomeActive,
   },
  
-  // {
-  //   name: ScreenNameEnum.Standout,
-  //   Component: Standout,
-  //   label: "Standouts",
-  //   logo: imageIndex.discovers,
-  //   logo1: imageIndex.discoverActive,
-  // },
+  {
+    name: ScreenNameEnum.Standout,
+    Component: Standout,
+    label: "Standouts",
+    logo: imageIndex.discovers,
+    logo1: imageIndex.discoverActive,
+  },
   {
     name: ScreenNameEnum.Likedyou,
     Component: Likedyou,

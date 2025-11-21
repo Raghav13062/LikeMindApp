@@ -28,10 +28,10 @@ export default function Login() {
 // admin@gmail.com
 // test@gmail.com
 // admin12@gmail.com
-  const [email, setEmail] = useState('admin12@gmail.com');
-  const [password, setPassword] = useState('123456');
-  //  const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
+  // const [email, setEmail] = useState('test@gmail.com');
+  // const [password, setPassword] = useState('123456');
+   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const navigation:any = useNavigation();

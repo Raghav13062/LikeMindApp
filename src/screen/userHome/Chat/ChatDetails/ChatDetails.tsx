@@ -10,37 +10,35 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
-  Modal,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import StatusBarComponent from '../../../../compoent/StatusBarCompoent';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector } from 'react-redux';
 
-const BASE_URL = "https://onetenbd.com/likemind/api";  
+const BASE_URL = "https://onetenbd.com/likemind/api";
 const { width } = Dimensions.get('window');
-const PRIMARY_COLOR = '#FF9800';
-const TEXT_DARK = '#212121';
-const TEXT_LIGHT = 'black';
+
+const PRIMARY_COLOR = "#FF9800";
+const BG_COLOR = "#F5F5F5";
 
 const ChatDetails = () => {
   const route: any = useRoute();
-  const { item } = route.params || {};
+  const { item } = route.params;
   const navigation = useNavigation();
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [myId, setMyId] = useState(""); 
 
   const flatListRef = useRef<FlatList>(null);
 
-  // ----------------------------------------------------
-  // 🔵 GET CHAT LIST (GROUP CHAT)
-  // ----------------------------------------------------
+ 
+
+  // ------------ GET CHAT LIST -------------
   const getChatMessages = async () => {
     try {
-      setLoading(true);
       const token = await AsyncStorage.getItem("token");
 
       const res = await fetch(`${BASE_URL}/chats/get_chat_group`, {
@@ -50,53 +48,47 @@ const ChatDetails = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          community_id: item?.id,
-        }),
+        body: JSON.stringify({ community_id: item?.id }),
       });
 
       const data = await res.json();
-      console.log("data",data)
-       if (data?.status === true) {
-        setMessages(data?.data || []);
-      }
 
+      if (data?.status) {
+        setMessages(data.data);
+      }
     } catch (error) {
       console.log("GET CHAT ERROR:", error);
-    } finally {
-      setLoading(false);
     }
   };
+  const isLogin:any = useSelector <any>((state) => state?.auth?.userData);
 
   useEffect(() => {
-    getChatMessages();
+     getChatMessages();
   }, []);
 
-  // ----------------------------------------------------
-  // 🔵 SEND MESSAGE API
-  // ----------------------------------------------------
+  // ------------ SEND MESSAGE -------------
   const sendMessage = async () => {
     if (!message.trim()) return;
+
     const token = await AsyncStorage.getItem("token");
 
+    // Show instantly
+    const tempMessage = {
+      id: Date.now(),
+      chat_message: message,
+      chat_sender_id: isLogin?.user_data.id,
+      isLocal: true,
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+    setMessage("");
+
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+
     try {
-      // --- Add to UI instantly ---
-      const newMsg = {
-        id: Date.now(),
-        chat_message: "55548555",
-        chat_sender_id: "me",
-        isSender: true,
-      };
-
-      setMessages((prev) => [newMsg, ...prev]);
-      setMessage("");
-
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-
-      // --- API call ---
-      const res = await fetch(`${BASE_URL}/chats/post_chat_group`, {
+      await fetch(`${BASE_URL}/chats/post_chat_group`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -105,49 +97,40 @@ const ChatDetails = () => {
         },
         body: JSON.stringify({
           community_id: item?.id,
-          chat_message: "434487454575477",
+          chat_message: tempMessage.chat_message,
         }),
       });
 
-      const response = await res.json();
-      console.log("SEND MESSAGE RESPONSE →", response);
-
-      // Reload message list
+      // Refresh chat from backend
       getChatMessages();
-
     } catch (error) {
-      console.log("SEND MESSAGE ERROR:", error);
+      console.log("SEND ERROR:", error);
     }
   };
 
-  const renderMessage = ({ item }: any) => {
-    const isSender = item?.chat_sender_id === "me";
+  // ------------ RENDER MESSAGE -------------
+  const renderMessage = ({ item: msg }: any) => {
+    console.log("item",item)
+ 
+  const  isOwner= isLogin?.user_data.id == item?.user_id ? true : false
+
     return (
-      <View
-        style={[
-          styles.messageContainer,
-          isSender ? styles.senderContainer : styles.receiverContainer,
-        ]}
-      >
+      <View style={[styles.msgRow, isOwner ? styles.right : styles.left]}>
+        {!isOwner && (
+          <Image
+            source={{ uri: item?.image }}
+            style={styles.avatarSmall}
+          />
+        )}
+
         <View
           style={[
-            styles.chatBubble,
-            isSender ? styles.senderBubble : styles.receiverBubble,
+            styles.bubble,
+            isOwner ? styles.senderBubble : styles.receiverBubble,
           ]}
         >
-          {!isSender && (
-            <Text style={styles.senderNameText}>
-              {item.chat_sender_name || "User"}
-            </Text>
-          )}
-
-          <Text
-            style={[
-              styles.chatText,
-              isSender ? { color: TEXT_LIGHT } : { color: TEXT_DARK },
-            ]}
-          >
-            {item.chat_message}
+          <Text style={[styles.msgText, isOwner && { color: "white" }]}>
+            {msg.chat_message}
           </Text>
         </View>
       </View>
@@ -155,45 +138,38 @@ const ChatDetails = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F9F9F9" }}>
-      <StatusBarComponent />
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG_COLOR }}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.headerIconContainer}
-        >
-          <MaterialIcons name="arrow-back" size={24} color={TEXT_LIGHT} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back" size={26} color="black" />
         </TouchableOpacity>
 
-        <Image source={{ uri: item?.image }} style={styles.profileImage} />
+        <Image source={{ uri: item?.image }} style={styles.avatar} />
 
-        <View style={styles.headerInfo}>
-          <Text style={styles.userName}>{item?.name || "Group"}</Text>
-          <Text style={styles.onlineStatus}>0 Active Users</Text>
+        <View style={{ marginLeft: 10 }}>
+          <Text style={styles.headerName}>{item?.name}</Text>
+          <Text style={styles.headerStatus}>Active Users</Text>
         </View>
       </View>
 
       {/* CHAT LIST */}
       <FlatList
         ref={flatListRef}
+        showsVerticalScrollIndicator={false}
         data={messages}
-        keyExtractor={(item) => item.id?.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderMessage}
-        contentContainerStyle={styles.chatListContent}
-        inverted
+        contentContainerStyle={{ padding: 15 }}
       />
 
       {/* MESSAGE INPUT */}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidingView}
       >
-        <View style={styles.inputContainer}>
+        <View style={styles.inputRow}>
           <TextInput
-            placeholder="Type message..."
-            placeholderTextColor="#999"
+            placeholder="Type a message..."
             value={message}
             onChangeText={setMessage}
             style={styles.input}
@@ -203,12 +179,12 @@ const ChatDetails = () => {
           <TouchableOpacity
             onPress={sendMessage}
             disabled={!message.trim()}
-            style={styles.sendButton}
+            style={styles.sendBtn}
           >
             <MaterialIcons
               name="send"
-              size={24}
-              color={message.trim() ? PRIMARY_COLOR : "#999"}
+              size={26}
+              color={message.trim() ? PRIMARY_COLOR : "#AAA"}
             />
           </TouchableOpacity>
         </View>
@@ -219,7 +195,6 @@ const ChatDetails = () => {
 
 export default ChatDetails;
 
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
@@ -228,66 +203,62 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     elevation: 2,
   },
-  headerIconContainer: { padding: 5 },
-  profileImage: {
-    width: 55,
-    height: 55,
+  avatar: {
+    width: 50,
+    height: 50,
     borderRadius: 50,
     marginLeft: 10,
   },
-  headerInfo: { marginLeft: 10, flex: 1 },
-  userName: { fontSize: 18, fontWeight: "700", color: TEXT_LIGHT },
-  onlineStatus: { color: "gray", fontSize: 12 },
+  avatarSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 20,
+    marginRight: 5,
+  },
+  headerName: { fontSize: 18, fontWeight: "700", color: "#000" },
+  headerStatus: { fontSize: 12, color: "gray" },
 
-  chatListContent: { paddingHorizontal: 15, paddingBottom: 15 },
+  msgRow: {
+    flexDirection: "row",
+    marginVertical: 5,
+    alignItems: "flex-end",
+  },
+  left: { alignSelf: "flex-start" },
+  right: { alignSelf: "flex-end" },
 
-  messageContainer: { flexDirection: "row", marginVertical: 6 },
-  senderContainer: { justifyContent: "flex-end", alignSelf: "flex-end" },
-  receiverContainer: { justifyContent: "flex-start", alignSelf: "flex-start" },
-
-  chatBubble: {
-    padding: 12,
-    maxWidth: width * 0.75,
+  bubble: {
+    maxWidth: width * 0.70,
+    padding: 10,
     borderRadius: 12,
   },
-  senderBubble: { backgroundColor: PRIMARY_COLOR },
+  senderBubble: {
+    backgroundColor: PRIMARY_COLOR,
+    borderBottomRightRadius: 0,
+  },
   receiverBubble: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "white",
+    borderBottomLeftRadius: 0,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "#DDD",
   },
 
-  senderNameText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: PRIMARY_COLOR,
-    marginBottom: 3,
-  },
-  chatText: { fontSize: 15, lineHeight: 20 },
+  msgText: { fontSize: 15, color: "black" },
 
-  keyboardAvoidingView: { padding: 5 },
-  inputContainer: {
+  inputRow: {
     flexDirection: "row",
     backgroundColor: "white",
-    borderRadius: 25,
-    paddingHorizontal: 15,
+    padding: 10,
     alignItems: "flex-end",
-        height:60,
-
-   },
+  },
   input: {
     flex: 1,
     minHeight: 40,
-    maxHeight: 100,
-    height:60,
-    fontSize: 15,
-    color: "#000",
-    
-    paddingVertical: 10,
+    maxHeight: 120,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
-  sendButton: {
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center",
+  sendBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
 });

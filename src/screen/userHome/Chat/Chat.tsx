@@ -87,7 +87,9 @@ setGroups(filteredGroups);
           </Text>
           <View style={styles.locationContainer}>
             <Text style={styles.userAddress} numberOfLines={1}>
-              {item.members?.toLocaleString() || 0} Members
+                         Members
+
+              {/* {item.members?.toLocaleString() || 0} Members */}
             </Text>
           </View>
         </View>
