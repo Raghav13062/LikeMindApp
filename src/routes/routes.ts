@@ -3,8 +3,7 @@
  import ProfileSetup from "../screen/ Profile/ProfileSetup/ ProfileSetup";
 import AddProfilePicture from "../screen/auth/AddProfilePicture";
  import CreatePassword from "../screen/auth/CreateNewPassword";
-import LetGetYouStarted from "../screen/auth/LetGetYouStarted";
-import Login from "../screen/auth/Login";
+ import Login from "../screen/auth/Login";
 import OnboardingScreen from "../screen/auth/Onboarding";
 import OtpScreen from "../screen/auth/OtpScreen";
 import PasswordReset from "../screen/auth/PasswordReset";
@@ -17,15 +16,13 @@ import OfferExperties from "../screen/OfferExperties";
 import HelpSupportScreen from "../screen/privay/HelpSupport";
 import LegalPoliciesScreen from "../screen/privay/LegalPoliciesScreen";
 import NotificationsSetting from "../screen/privay/NotificationsSetting";
-// import Creategroup from "../screen/SharedInterest/Creategroup/Creategroup";
-// import SharedChatDetails from "../screen/SharedInterest/SharedChat/SharedChatDetails/SharedChatDetails";
- import ChatDetails from "../screen/userHome/Chat/ChatDetails/ChatDetails";
+  import ChatDetails from "../screen/userHome/Chat/ChatDetails/ChatDetails";
 import CommunitiesScreen from "../screen/userHome/CommunitiesScreen/CommunitiesScreen";
 import EditProfile from "../screen/userHome/EditProfile/EditProfile";
-import EventListScreen from "../screen/userHome/EventListScreen";
-import ExpertMarkertPlace from "../screen/userHome/ExpertMarkertPlace/ExpertMarkertPlace";
+ import ExpertMarkertPlace from "../screen/userHome/ExpertMarkertPlace/ExpertMarkertPlace";
 import FindAParter from "../screen/userHome/FindAParter/FindAParter";
 import FindAParterDetils from "../screen/userHome/FindAParter/FindAParterDetils/FindAParterDetils";
+import HostEvent from "../screen/userHome/HostEvent/HostEvent";
 import JoinSessions from "../screen/userHome/JoinSessions/JoinSessions";
 import AddComingJoin from "../screen/userHome/Likedyou/AddComingJoin";
 import MarketProfileDetails from "../screen/userHome/MarketProfileDetails/MarketProfileDetails";
@@ -62,18 +59,7 @@ const _routes:any = {
       name: ScreenNameEnum.OnboardingScreen,
       Component: OnboardingScreen,
     },
-    // {
-    //   name: ScreenNameEnum.EventForm,
-    //   Component: EventForm,
-    // },
-    // {
-    //   name: ScreenNameEnum.EditEventForm,
-    //   Component: EditEventForm,
-    // },
-    // {
-    //   name: ScreenNameEnum.ChooseRoleScreen,
-    //   Component: ChooseRoleScreen,
-    // },
+   
  
     {
       name: ScreenNameEnum.CommunitiesScreen,
@@ -105,10 +91,7 @@ const _routes:any = {
       name: ScreenNameEnum.ProfileSetup,
       Component:ProfileSetup,
     },
-    {
-      name: ScreenNameEnum.LetGetYouStarted,
-      Component:LetGetYouStarted,
-    },
+   
     
     {
       name: ScreenNameEnum.AddProfilePicture,
@@ -191,7 +174,7 @@ const _routes:any = {
     },
        {
       name: ScreenNameEnum.EventListScreen,
-      Component:EventListScreen,
+      Component:HostEvent,
     },
     {
       name: ScreenNameEnum.FAQ,
@@ -205,11 +188,7 @@ const _routes:any = {
       name: ScreenNameEnum.EditProfile,
       Component:EditProfile,
     },
-    // {
-    //   name: ScreenNameEnum.BasicInformation,
-    //   Component:InformationStepThird,
-    // },
- 
+   
 
     {
       name: ScreenNameEnum.InformationStepSecond,

@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 const UserTypeSelectionScreen = () => {
   const [selectedType, setSelectedType] = useState('beginner');
 
-  const handleSelect = (type) => {
+  const handleSelect = (type:any) => {
     setSelectedType(type);
   };
 

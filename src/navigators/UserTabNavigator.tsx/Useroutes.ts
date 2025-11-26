@@ -1,16 +1,16 @@
-import imageIndex from "../../assets/imageIndex";
+ import imageIndex from "../../assets/imageIndex";
  import ScreenNameEnum from "../../routes/screenName.enum";
 import Chat from "../../screen/userHome/Chat/Chat";
+import Home from "../../screen/userHome/Home/Home";
  import Likedyou from "../../screen/userHome/Likedyou/Likedyou";
 import Profile from "../../screen/userHome/Profile/Profile";
 import Standout from "../../screen/userHome/Standout/Standout";
-import DaboardHome from "../NewHome1/DaboardHome";
- 
+  
 const Useroutes = [
   {
     name: ScreenNameEnum.Home,
     // Component: Home,
-        Component: DaboardHome,
+        Component: Home,
 
     
     label: "Home",

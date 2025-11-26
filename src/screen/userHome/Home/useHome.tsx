@@ -1,24 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux'; // ✅ import dispatch
-import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../../Api/apiRequest';
+import {   useEffect, useState } from 'react';
+import {   useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux'; // ✅ import dispatch
+  
+import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../Api/apiRequest';
 import { loginSuccess } from '../../../redux/feature/authSlice';
 import { getgroups } from '../../../Api/apiPaidExperti';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useHome = () => {
   const navigation: any = useNavigation();
   const dispatch = useDispatch(); // ✅ initialize dispatch
   const [isLoading, setIsLoading] = useState(false);
-  const [event, setevent] = useState([]);
-  const [standoutList, setStandoutList] = useState([]);
+  const [event1, setevent1] = useState([]);
+    const [event, setevent] = useState([]);
+  const isLogin:any = useSelector <any>((state) => state?.auth?.userData);
 
-  useEffect(() => {
-    GetFunction();
-    fetchEventS()
-    social()
-    getgroupsFunction()
-  }, []);
+  const [standoutList, setStandoutList] = useState([]);
+  const [communitiesList, setCommunitiesList] = useState([]);
+ useEffect(()=>{
+      GetFunction();
+    fetchEventS();
+    social();
+    getgroupsFunction();
+    fetchCommunities();
+ },[])
 
   const GetFunction = async () => {
     try {
@@ -44,6 +48,7 @@ const useHome = () => {
       setIsLoading(true);
       const response = await Usergetevents(setIsLoading);
       if (response?.data) {
+        console.log("Events data:", response.data);
           setevent(response.data)
       }  
     } catch (error) {
@@ -57,11 +62,10 @@ const useHome = () => {
       setIsLoading(true);
       const response = await getgroups(setIsLoading);
       if (response?.data) {
-          // setevent(response.data)
+           setevent1(response.data)
       }  
     } catch (error) {
-      console.error("Community fetch error:", error);
-    } finally {
+     } finally {
       setIsLoading(false);
     }
   };
@@ -79,12 +83,29 @@ const useHome = () => {
       setIsLoading(false);
     }
   };
+  
+    const fetchCommunities = async () => {
+      try {
+        setIsLoading(true);
+        const response = await UserGetCommunitiesApi(setIsLoading);
+        const data = response?.data || [];
+        console.log("Communities data:", response?.data);
+        setCommunitiesList(data);
+       } catch (error) {
+        console.error('Community fetch error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
   return {
     navigation,
     isLoading,
     setIsLoading,
      event, setevent ,
-     standoutList
+     standoutList,
+     communitiesList, setCommunitiesList,
+     event1,
+     isLogin
   };
 };
 

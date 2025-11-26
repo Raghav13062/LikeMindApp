@@ -1,202 +1,198 @@
-
 import { Dimensions, Platform, StyleSheet } from 'react-native';
-const { width } = Dimensions.get("window");
-
+ 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', marginHorizontal: 12 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold',color:"black" },
-  iconRow: { flexDirection: 'row', alignItems: 'center' },
-
-  card: {
-    flexDirection: 'row',
+  safeArea: {
+    flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginTop: 12,
-    marginHorizontal: 3,
-    alignItems: 'flex-start',
-    marginLeft:11,
-    marginBottom:11,
-  
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  
   },
-  featureIcon: { height: 50, width: 50, resizeMode: 'contain' },
-  cardText: { marginLeft: 12, flex: 1 },
-  cardTitle: { fontWeight: '600', color:"black", fontSize: 15 },
-  cardDesc: { fontSize: 13, color: '#666', lineHeight: 16, marginTop: 3 },
-
-  sectionHeader: {
+  container: {
+    marginHorizontal: 14,
+    paddingTop: 0,
+    paddingBottom: 20,
+  },
+  // Custom Header Styles
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  sectionTitle: { fontSize: 15, fontWeight: 'bold',color:"black" },
-  viewAll: { color: '#8E44AD', fontSize: 13 },
-
-  horizontalScroll: { marginTop: 12 },
-  eventCard: {
-    width: 260,
-    marginRight: 16,
-    marginLeft: 2,
-    marginBottom: 3,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 10,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    
-  
-    ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.15,
-          shadowRadius: 6,
-        },
-        android: {
-          elevation: 4,
-        },
-      }),
-  
   },
-  eventImage: {
-    height: 90,
-    width: 90,
-    resizeMode: 'cover',
-    borderRadius: 12,
+  greetingText: {
+    marginRight: 10,
+    fontSize: 16,
+    color: '#666',
   },
-  eventTitle: { fontSize: 13, fontWeight: '500' },
-  eventTime: { color: '#8E44AD', fontSize: 13,marginTop:2,
-    marginBottom:5
-   },
-  joinButton: {
-    marginTop: 6,
-    backgroundColor: '#F39C12',
-    paddingVertical: 4,
-    borderRadius: 20,
-    width: 80,
-  },
-  joinText: { color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 14 },
-
-  personCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    padding: 12,
-  },
-  avatar: { width: 50, height: 50, borderRadius: 25 },
-  personName: { fontWeight: 'bold', fontSize: 15 },
-  personDesc: { fontSize: 12, color: '#666', marginTop: 2 },
-  connectButton: {
-    backgroundColor: '#F39C12',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  connectText: { color: '#fff', fontWeight: '600' },
-  peopleCard: {
-    width: 180,
-    padding: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,      // <— noticeably rounder
-    marginRight: 16,
-    marginLeft: 2,
-    marginTop: 20,
-    marginBottom: 20,
-    alignItems: 'center',
-  
-    // Shadow (iOS) & Elevation (Android)
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,   // a bit softer
-        shadowRadius: 8,       // slightly wider blur
-      },
-      android: {
-        elevation: 6,          // bumps the depth
-        shadowColor: '#000',   // helps on Android 12+
-      },
-    }),
-  
-
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 8,
-    
- 
+  customAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#6750A4', // प्रोफाइल आइकन का रंग
     justifyContent: 'center',
     alignItems: 'center',
-   },
-  peopleAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    marginRight: 8,
+  },
+  customIconButton: {
+    padding: 4,
+  },
+  // Section Titles
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
     marginBottom: 10,
   },
-  
-  peopleName: {
+  // Next Up Card, Expert Card, Communities, Events List Styles... (पिछले कोड से अपरिवर्तित)
+  nextUpCard: {
+    backgroundColor: '#ff7b00',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'flex-start',
+   },
+  nextUpTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 6,
-    color:"black"
+    color: '#fff',
+    marginBottom: 5,
   },
-  
-  tag: {
+  nextUpDate: {
+    fontSize: 16,
+    color: '#E6E0F0',
+  },
+  horizontalScroll: {
+    marginVertical: 5,
+  },
+  expertCard: {
+    width: 150,
+    height: 100,
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 10,
+    justifyContent: 'space-between',
+  },
+  expertTime: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
+  expertTopic: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  expertName: {
+    fontSize: 12,
+    color: '#555',
+  },
+  communityChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: '#f2f2f2',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    backgroundColor: '#E8F5E9',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#C8E6C9',
+    
   },
-  
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFA500',
-    marginRight: 6,
+  communityName: {
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#388E3C',
   },
-  
-  tagText: {
+  unreadBadge: {
+    marginLeft: 8,
+    backgroundColor: '#FF5722',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+  },
+  unreadText: {
+    color: 'black',
     fontSize: 12,
+    fontWeight: 'bold',
+  },
+  eventItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 0,
+    backgroundColor: '#fff',
+  },
+  eventBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  eventIcon: {
+    marginRight: 15,
+  },
+  eventDetails: {
+    flex: 1,
+  },
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#333',
-    marginLeft:5
   },
-  
-  peopleLocation: {
-    fontSize: 12,
-    color: 'purple',
-    textAlign: 'center',
-    marginBottom: 10,
+  eventSubText: {
+    fontSize: 14,
+    color: '#777',
+    marginTop: 2,
   },
-  
-  connectButtonPeople: {
-    backgroundColor: '#ff8c00',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+  // Custom FAB/Speed Dial Styles
+  fabContainer: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    alignItems: 'flex-end',
+  },
+  fabButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#6750A4', // प्राइमरी कलर
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  fabMenu: {
+    backgroundColor: '#fff',
     borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
-  
+  fabMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  fabMenuText: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+  },
 });
-export default styles;
+ export default styles;

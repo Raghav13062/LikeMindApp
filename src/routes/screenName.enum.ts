@@ -17,7 +17,7 @@ enum ScreenNameEnum {
   AddProfilePicture="AddProfilePicture",
   ExpertMarkertPlace ="ExpertMarkertPlace",
   FindAParter="FindAParter",
-  EventListScreen="EventListScreen",
+  EventListScreen="HostEvent",
   TabNavigator="TabNavigator",
   Standout="Standout",
   Creategroup="Creategroup",

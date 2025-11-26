@@ -64,7 +64,7 @@ const StyledTextInput = ({ label, placeholder, value, onChangeText, multiline, k
   );
 };
 
-const EventListScreen = () => {
+const HostEvent = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -556,7 +556,7 @@ formdata.append("end_date", formatDate(endDate));
   );
 };
 
-export default EventListScreen;
+export default HostEvent;
 
 const styles = StyleSheet.create({
   container: {

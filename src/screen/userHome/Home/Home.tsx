@@ -1,374 +1,172 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-   FlatList,
-   ActivityIndicator
-} from 'react-native';
-import StatusBarComponent from '../../../compoent/StatusBarCompoent';
-import imageIndex from '../../../assets/imageIndex';
-import DashBoardHeader from '../../../compoent/DashBoardHeader';
-import styles from './style';
-import { useNavigation } from '@react-navigation/native';
-import ScreenNameEnum from '../../../routes/screenName.enum';
-import useHome from './useHome';
-import LoadingModal from '../../../utils/Loader';
-import EmptyListComponent from '../../../compoent/EmptyListComponent';
-import moment from 'moment';
+import React, { useState } from 'react';
+import { Image,ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ComingSoon from '../ComingSoon';
- 
-const Home = () => {
-  const nav = useNavigation() 
-  const {    navigation,
-    isLoading,
-      event,  standoutList,
- 
-     }= useHome()
-  const features = [
-    {
-      title: 'Roger Ekstrom',
-      desc: '✨ Expert place” Learn from Experts” (for the marketplace).',
-      icon: imageIndex.leader,
-      scree:ScreenNameEnum.ExpertMarkertPlace
-    },
-    {
-      title: 'Community',
-      desc: '🏠 Join or Build Communities',
-      icon: imageIndex.community,
-      scree:ScreenNameEnum.CommunitiesScreen
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import styles from './style';
+ import useHome from './useHome';
+import { JoinCommunityModal } from '../../../compoent/JoinCommunityModal';
+ import CreateEventModal from '../../../compoent/CreateEventModal';
+import LoadingModal from '../../../utils/Loader';
 
-    },
-    {
-      title: 'Explore Events ',
-      desc: '🎟 Explore Events & Experiences',
-      icon: imageIndex.conference,
-      scree:ScreenNameEnum.CommunitiesScreen
-
-    },
-  ];
-    const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchGroups();
-  }, []);
-
-  const fetchGroups = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        setError("No token found");
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch(
-        "https://onetenbd.com/likemind/api/get-groups",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.success) {
-        setGroups(result.data);
-      } else {
-        setError(result.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch groups");
-    } finally {
-      setLoading(false);
-    }
+const getCurrentDate = () => {
+    const now = new Date();
+    const day = now.toLocaleDateString('en-US', { weekday: 'short' });
+    const month = now.toLocaleDateString('en-US', { month: 'short' });
+    const dateNum = now?.getDate();
+    const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return `${day}, ${month} ${dateNum} • ${time}`;
   };
-const renderGroupItem = ({ item }) => (
-  // <View
-  //   style={{
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     backgroundColor: '#fff',
-  //     borderRadius: 12,
-  //     padding: 15,
-  //     marginHorizontal: 12,
-  //     marginVertical: 8,
-  //     shadowColor: '#000',
-  //     shadowOffset: { width: 0, height: 2 },
-  //     shadowOpacity: 0.15,
-  //     shadowRadius: 4,
-  //     elevation: 4,
-  //     borderWidth: 0.5,
-  //     borderColor: '#ddd',
-  //   }}>
-  //   <Image
-  //     source={{ uri: item.image }}
-  //     style={{
-  //       width: 60,
-  //       height: 60,
-  //       borderRadius: 30,
-  //     }}
-  //   />
-  //   <View style={{ marginLeft: 15, flex: 1 }}>
-  //     <Text
-  //       style={{
-  //         fontSize: 16,
-  //         fontWeight: '600',
-  //         color: '#222',
-  //         marginBottom: 4,
-  //       }}>
-  //       {item.title}
-  //     </Text>
-  //     <Text
-  //       style={{
-  //         fontSize: 14,
-  //         color: '#777',
-  //       }}>
-  //       {item.location}
-  //     </Text>
-  //   </View>
-  // </View>
-   <View style={[styles.eventCard,{
-    marginTop:12
-   }]}  >
-                <Image
-                  source={{
-                    uri:  item?.image,
-                  }}
-                  style={styles.eventImage}
-                />
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                  <Text style={styles.eventTitle}>{item?.title}</Text>
-                                    <Text style={styles.eventTitle}>{item?.location}</Text>
 
-                 <View style={{
-                  flexDirection:"row",
-                  alignItems:"center"
-                }}>
-                {/* <TouchableOpacity style={styles.joinButton} 
-                  onPress={()=>{
-                nav.navigate(ScreenNameEnum.MarketProfileDetails,{
-                  item:item
-                })
-                //  nav.navigate(ScreenNameEnum.JoinSessions)
-                  }}
-                >
-                    <Text style={styles.joinText}>Join Now</Text>
-                  </TouchableOpacity> */}
-                
-                </View>
-              
-                </View>
-                
-              </View>
+  const NEXT_UP = { 
+      title: "Yoga & Mindfulness", 
+      date: getCurrentDate() 
+  };
+const SectionTitle = ({ title }: any) => (
+  <Text style={styles.sectionTitle}>{title}</Text>
 );
+const Home = () => {
 
-
-  if (loading) {
-    return (
-      <View style={{
-         flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-      }}>
-        <ActivityIndicator size="large" color="#FFCC00" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={{
-         flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-      }}>
-        <Text style={{
-          color: "red",
-    fontSize: 16,
-        }}>{error}</Text>
-      </View>
-    );
-  }
-
+  const { navigation,
+    isLoading,
+     event,  
+     event1,
+     isLogin,
+    communitiesList, } = useHome()
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
+ 
+ const ExpertCard = ({ item }:any) => {
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-            {isLoading ? <LoadingModal /> : null}
+    <TouchableOpacity
+      style={[styles.expertCard, { backgroundColor: "#B3E5FC" }]}
+      onPress={() => {
+        navigation.navigate(ScreenNameEnum.MarketProfileDetails, {
+          item: item,
+        });
+      }}
+    >
+      {/* IMAGE (uncomment if needed) */}
+      {/* <Image
+        source={{ uri: item.image }}
+        style={styles.cardImage}
+      /> */}
 
-      <StatusBarComponent />
-          <DashBoardHeader />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View  >
-
- 
-
-          {features.map((item:any, index:any) => (
-            <TouchableOpacity 
-            
-            onPress={()=>{
-              nav.navigate(item?.scree)
-
-            }}
-            style={styles.card} key={index}>
-              <Image source={item.icon} style={styles.featureIcon} />
-              <View style={styles.cardText}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-                <Text style={styles.cardDesc}>{item.desc}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-           <ComingSoon/>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Host Events </Text>
-          
-        </View>
-        
-
-         <FlatList 
-        showsHorizontalScrollIndicator={false}
-      data={groups}
-      keyExtractor={(item) => item.id}
-      horizontal
-      showsVerticalScrollIndicator={false}
-      renderItem={renderGroupItem}
-     />
-
-
-
-  <View style={[styles.sectionHeader,{marginBottom:15}]}>
-          <Text style={styles.sectionTitle}>Events happening soon</Text>
-          <TouchableOpacity 
-            onPress={()=>{
-              nav.navigate(ScreenNameEnum.ExpertMarkertPlace)
-                }}
-          >
-            <Text style={styles.viewAll}>View all</Text>
-          </TouchableOpacity>
-        </View>
-          <FlatList
-        data={event}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        ListEmptyComponent={<EmptyListComponent message="No Event found." />}
-
-        renderItem={((item:any)=>{
-
-
-  const rawDate = item?.item?.created_at;
-
-  const formattedDate = moment(rawDate).format('ddd, MMM DD – h:mm A');
-          return(
-            <View style={styles.eventCard}  >
-                <Image
-                  source={{
-                    uri:  item?.item?.image,
-                  }}
-                  style={styles.eventImage}
-                />
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                  <Text style={styles.eventTitle}>{item?.item?.title}</Text>
-                  <Text style={styles.eventTime}>{formattedDate}</Text>
-                <View style={{
-                  flexDirection:"row",
-                  alignItems:"center"
-                }}>
-                <TouchableOpacity style={styles.joinButton} 
-                  onPress={()=>{
-                nav.navigate(ScreenNameEnum.MarketProfileDetails,{
-                  item:item?.item
-                })
-                   }}
-                >
-                    <Text style={styles.joinText}>Join Now</Text>
-                  </TouchableOpacity>
-                
-                </View>
-              
-                </View>
-                
-              </View>
-          )
-        })}
-        keyExtractor={(item) => item.id}
-      />
-
- <View style={styles.sectionHeader}>
-  <Text style={styles.sectionTitle}>People You Might Like to Connect With</Text>
-  <TouchableOpacity onPress={()=>navigation.navigate(ScreenNameEnum.FindAParter)}>
-    <Text style={styles.viewAll}>View all</Text>
-  </TouchableOpacity>
-</View>
-
-<ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12 }}>
- <FlatList
-      data={standoutList}
-      showsHorizontalScrollIndicator={false}
-      horizontal
-      ListEmptyComponent={<EmptyListComponent message="No Event found." />}
-
-      renderItem={((person:any)=>{
-        const item = person?.item
-         return(
-          <View style={styles.peopleCard}  >
-          <Image
-            source={{
-              uri: item?.image
-            }}
-            style={styles.peopleAvatar}
-          />
-          <Text style={styles.peopleName}>{item?.full_name || "my title"}</Text>
-          <Text style={styles.peopleLocation}>{item?.exp_level|| "my title"}</Text>
-          <View style={styles.tag}>
-          </View>
-          <TouchableOpacity style={styles.connectButtonPeople} 
-          onPress={()=>{
-            nav.navigate(ScreenNameEnum.FindAParterDetils,{
-              item:item
-            })
-          }}
-        
-          >
-            <Text style={styles.connectText}>Connect</Text>
-          </TouchableOpacity>
-        </View>
-        )
-      })}
-      // keyExtractor={(item) => item.id}
-    />
-</ScrollView>
-
-      </ScrollView>
-            {/* Floating Button */}
-      <TouchableOpacity style={styles.floatingButton} 
-      
-      onPress={()=>nav.navigate(ScreenNameEnum.CommunitiesScreen)}
-      > 
-        <Image source={imageIndex.addbutt} 
-        style={{
-          height:80,
-          width:80,
-          resizeMode:"contain"
-        }} 
-        />
-       </TouchableOpacity>
-    </SafeAreaView>
+      <Text style={styles.expertTime}>8:00 AM</Text>
+      <Text style={styles.expertTopic}>{item.title}</Text>
+      <Text style={styles.expertName}>{item.location}</Text>
+    </TouchableOpacity>
   );
 };
 
 
+const CommunityChip = ({ item, index }: any) => (
+  <TouchableOpacity
+    onPress={() => {
+      setSelected(item);
+      setOpen(true);
+    }}
+    style={styles.communityChip}
+  >
+    <MaterialIcons
+      name={item.icon || "group"}
+      size={20}
+      color="#6750A4"
+    />
 
+    <Text style={styles.communityName}>{item.name}</Text>
+
+  </TouchableOpacity>
+);
+;
+  const EventListItem = ({ item, isLast }: any) => {
+     return(
+        <TouchableOpacity
+      onPress={() => {
+        navigation.navigate(ScreenNameEnum.MarketProfileDetails, {
+          item: item
+        })
+      }}
+      style={[styles.eventItem, !isLast && styles.eventBorder]} activeOpacity={0.7}>
+      <MaterialIcons name="event-available" size={24} color="#6750A4" style={styles.eventIcon} />
+      <View style={styles.eventDetails}>
+        <Text style={styles.eventTitle}>{item.title}</Text>
+        <Text style={styles.eventSubText}>{item.date}{item.name}</Text>
+      </View>
+      <MaterialIcons name="chevron-right" size={24} color="#ccc" />
+    </TouchableOpacity>
+    )
+  }
+  const [open1, setOpen1] = useState(false);
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      {isLoading ? <LoadingModal /> : null}
+
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Home</Text>
+        <View style={styles.headerRight}>
+          <Text style={styles.greetingText}>Hi, {isLogin?.user_data?.first_name}!</Text>
+          {/* Custom Avatar */}
+         <View style={styles.customAvatar}>
+  {isLogin?.user_data?.image ? (
+    <Image
+      source={{ uri: isLogin?.user_data?.image }}
+      style={{
+         width: 40,
+  height: 40,
+  borderRadius: 20,
+  resizeMode: "cover",
+      }}
+    />
+  ) : (
+    <MaterialIcons name="person" size={24} color="#fff" />
+  )}
+</View>
+
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        {/* 2. Your Next Up (Priority Card) */}
+        <SectionTitle title="Your Next Up" />
+        <View style={styles.nextUpCard}>
+          <Text style={styles.nextUpTitle}>{NEXT_UP.title}</Text>
+          <Text style={styles.nextUpDate}>{NEXT_UP.date}</Text>
+        </View>
+
+        {/* 3. Your Expert Schedule (Horizontal Scroll) */}
+        <SectionTitle title="Your Expert Schedule" />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+          {event1.map((item, index) => (
+            <ExpertCard key={index} item={item} />
+          ))}
+        </ScrollView>
+
+        {/* 4. Your Communities (Horizontal Scroll) */}
+        <SectionTitle title="Your Communities" />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+          {communitiesList.map((item) => (
+            <CommunityChip item={item} />
+          ))}
+        </ScrollView>
+
+        {/* 5. Your Events (Vertical List) */}
+        <SectionTitle title="Your Events" />
+        <View >
+          {event.map((item, index) => (
+            <EventListItem key={index} item={item} />
+          ))}
+        </View>
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
+      <CreateEventModal
+        visible={open1}
+        onClose={() => setOpen1(false)}
+        // onSubmit={EventApicall}
+      />
+ <JoinCommunityModal visible={open} data={selected} onClose={() => setOpen(false)} />      <FabSpeedDial />
+    </SafeAreaView>
+  );
+};
 export default Home;

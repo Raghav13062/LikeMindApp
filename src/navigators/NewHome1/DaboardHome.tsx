@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+'import React, { useState } from 'react';
 import { Image,ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,7 +8,7 @@ import useHome from './useHome';
 import LoadingModal from '../../utils/Loader';
 import ScreenNameEnum from '../../routes/screenName.enum';
 import { JoinCommunityModal } from '../../compoent/JoinCommunityModal';
-import YourScheduleEventModal from '../../compoent/YourScheduleEventModal';
+import YourScheduleEventModal from '../../compoent/CreateEventModal';
  
 const getCurrentDate = () => {
     const now = new Date();
@@ -179,4 +179,4 @@ const CommunityChip = ({ item, index }: any) => (
     </SafeAreaView>
   );
 };
-export default DaboardHome;
+export default DaboardHome;'
