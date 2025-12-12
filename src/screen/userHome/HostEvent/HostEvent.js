@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -12,18 +13,18 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
-import CustomHeader from "../../compoent/CustomHeader";
-import * as ImagePicker from "react-native-image-picker";
+  import * as ImagePicker from "react-native-image-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons for a fresh look
-import ScreenNameEnum from "../../routes/screenName.enum";
-import { useNavigation } from "@react-navigation/native";
-import LocationSearchModal from "../../compoent/LocationSearchModal";
-import DatePicker from "react-native-date-picker";
+ import { useNavigation } from "@react-navigation/native";
+ import DatePicker from "react-native-date-picker";
 import { base_url } from "../../Api";
 import { useSelector } from "react-redux";
+import CustomHeader from "../../../compoent/CustomHeader";
+import LocationSearchModal from "../../../compoent/LocationSearchModal";
+import ScreenNameEnum from "../../../routes/screenName.enum";
 
 // --- 🎨 Premium Color Palette ---
 const COLORS = {
@@ -79,6 +80,8 @@ const HostEvent = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
 const [endDate, setEndDate] = useState(new Date());
+   const navigation = useNavigation()
+  const isLogin = useSelector ((state) => state?.auth?.userData);
 
 const [openStart, setOpenStart] = useState(false);
 const [openEnd, setOpenEnd] = useState(false);
@@ -238,8 +241,7 @@ formdata.append("end_date", formatDate(endDate));
       setIsSubmitting(false);
     }
   };
-   const isLogin = useSelector((state) => state?.auth?.userData);
-     // ✔ Check owner
+      // ✔ Check owner
    const DeleteEventw = async (
       item,
    ) => {
@@ -282,11 +284,10 @@ formdata.append("end_date", formatDate(endDate));
   const closeModal = () => {
     setModalVisible(false);
   };
-  const navigation = useNavigation()
 
   const renderItem = ({ item }) => {
-          const isOwner = isLogin?.user_data?.id == item?.user_id;
-
+        const isOwner = isLogin?.user_data?.id == item?.user_id;
+ 
     return(
        <View style={styles.card}>
         
@@ -354,8 +355,14 @@ formdata.append("end_date", formatDate(endDate));
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <CustomHeader label=" Host Events" />
+    <SafeAreaView style={[styles.container,{
+      paddingTop:25
+    }]}>
+      <CustomHeader label=" Host Events" 
+      
+      
+      
+      />
 
       {/* Host Event Button (Floating Action Button style) */}
       <TouchableOpacity
@@ -561,8 +568,7 @@ export default HostEvent;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background
-  },
+   },
   listContainer: {
     paddingHorizontal: 16,
     paddingTop: 8,

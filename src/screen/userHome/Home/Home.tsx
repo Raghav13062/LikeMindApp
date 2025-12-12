@@ -7,6 +7,8 @@ import styles from './style';
 import { JoinCommunityModal } from '../../../compoent/JoinCommunityModal';
  import CreateEventModal from '../../../compoent/CreateEventModal';
 import LoadingModal from '../../../utils/Loader';
+import FabSpeedDial from '../../../compoent/FabSpeedDial';
+import ScreenNameEnum from '../../../routes/screenName.enum';
 
 const getCurrentDate = () => {
     const now = new Date();
@@ -165,7 +167,8 @@ const CommunityChip = ({ item, index }: any) => (
         onClose={() => setOpen1(false)}
         // onSubmit={EventApicall}
       />
- <JoinCommunityModal visible={open} data={selected} onClose={() => setOpen(false)} />      <FabSpeedDial />
+ <JoinCommunityModal visible={open} data={selected} onClose={() => setOpen(false)} />   
+     <FabSpeedDial />
     </SafeAreaView>
   );
 };

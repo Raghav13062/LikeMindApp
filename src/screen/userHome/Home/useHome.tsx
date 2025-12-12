@@ -2,9 +2,10 @@ import {   useEffect, useState } from 'react';
 import {   useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux'; // ✅ import dispatch
   
-import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../Api/apiRequest';
+// import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../Api/apiRequest';
 import { loginSuccess } from '../../../redux/feature/authSlice';
 import { getgroups } from '../../../Api/apiPaidExperti';
+import { Get_post_Api, socialusersApi, UserGetCommunitiesApi, Usergetevents } from '../../../Api/apiRequest';
 
 const useHome = () => {
   const navigation: any = useNavigation();
@@ -47,6 +48,7 @@ const useHome = () => {
     try {
       setIsLoading(true);
       const response = await Usergetevents(setIsLoading);
+      console.log("Events response:", response);
       if (response?.data) {
         console.log("Events data:", response.data);
           setevent(response.data)
@@ -61,8 +63,10 @@ const useHome = () => {
     try {
       setIsLoading(true);
       const response = await getgroups(setIsLoading);
+            console.log("Events response:", response);
+
       if (response?.data) {
-           setevent1(response.data)
+           setevent1(response?.data)
       }  
     } catch (error) {
      } finally {
